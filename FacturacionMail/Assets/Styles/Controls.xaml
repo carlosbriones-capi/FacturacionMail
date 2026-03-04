@@ -101,26 +101,31 @@
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="Padding"         Value="8,6"/>
+        <Setter Property="Padding"         Value="10,8"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Border x:Name="border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5"
-                            SnapsToDevicePixels="True">
-                        <ScrollViewer x:Name="PART_ContentHost"
-                                      Focusable="False"
-                                      Margin="{TemplateBinding Padding}"
-                                      VerticalScrollBarVisibility="Hidden"/>
-                    </Border>
+                    <Grid>
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
                             <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryLightBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -143,10 +148,10 @@
     <!-- ===== LABEL ===== -->
     <Style x:Key="FormLabelStyle" TargetType="TextBlock">
         <Setter Property="FontFamily"  Value="Segoe UI"/>
-        <Setter Property="FontSize"    Value="12"/>
+        <Setter Property="FontSize"    Value="13"/>
         <Setter Property="FontWeight"  Value="SemiBold"/>
         <Setter Property="Foreground"  Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="Margin"      Value="0,0,0,4"/>
+        <Setter Property="Margin"      Value="2,0,0,5"/>
     </Style>
 
     <!-- ===== GROUP BOX (card) ===== -->
@@ -154,11 +159,11 @@
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius"    Value="10"/>
+        <Setter Property="CornerRadius"    Value="12"/>
         <Setter Property="Padding"         Value="20,16"/>
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect Color="#A0AEC0" BlurRadius="12" ShadowDepth="2" Opacity="0.18"/>
+                <DropShadowEffect Color="#718096" BlurRadius="15" ShadowDepth="3" Opacity="0.12"/>
             </Setter.Value>
         </Setter>
     </Style>
