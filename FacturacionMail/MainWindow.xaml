@@ -1,12 +1,96 @@
 ﻿<Window x:Class="FacturacionMail.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FacturacionMail"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        xmlns:views="clr-namespace:FacturacionMail.Views"
+        Title="Facturas — Impresión y Envíos Mail"
+        MinWidth="900" MinHeight="600"
+        Width="1150" Height="760"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}">
 
-    </Grid>
+    <!-- MENÚ PRINCIPAL -->
+    <Window.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <!-- ── Barra de título corporativa ── -->
+        <Border DockPanel.Dock="Top"
+                Background="{StaticResource HeaderGradientBrush}"
+                Padding="16,10">
+            <DockPanel>
+                <TextBlock Text="📄  Facturas — Impresión y Envíos Mail"
+                           Foreground="White"
+                           FontFamily="Segoe UI"
+                           FontWeight="SemiBold"
+                           FontSize="16"
+                           VerticalAlignment="Center"/>
+                <TextBlock DockPanel.Dock="Right"
+                           Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='Fecha: {0:dd/MM/yyyy}'}"
+                           xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                           Foreground="#B3D4FF"
+                           FontFamily="Segoe UI"
+                           FontSize="12"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"/>
+            </DockPanel>
+        </Border>
+
+        <!-- ── Menú ── -->
+        <Menu DockPanel.Dock="Top"
+              Background="{StaticResource SurfaceBrush}"
+              BorderBrush="{StaticResource BorderLightBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="6,4">
+            <MenuItem Header="Estado">
+                <MenuItem Header="Conexión BD"/>
+                <MenuItem Header="Servidor de correo"/>
+                <Separator/>
+                <MenuItem Header="Acerca de..."/>
+            </MenuItem>
+            <MenuItem Header="Órdenes">
+                <MenuItem Header="Procesar selección"/>
+                <MenuItem Header="Enviar mail"/>
+                <Separator/>
+                <MenuItem Header="Limpiar criterios"/>
+            </MenuItem>
+            <MenuItem Header="Ficheros Excel">
+                <MenuItem Header="Exportar facturas..."/>
+                <MenuItem Header="Exportar direcciones..."/>
+            </MenuItem>
+            <MenuItem Header="Ver">
+                <MenuItem Header="Consulta de facturas" IsChecked="True"/>
+                <Separator/>
+                <MenuItem Header="Clientes excluidos"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- ── Barra de estado inferior ── -->
+        <StatusBar DockPanel.Dock="Bottom"
+                   Background="{StaticResource SurfaceAltBrush}"
+                   BorderBrush="{StaticResource BorderLightBrush}"
+                   BorderThickness="0,1,0,0">
+            <StatusBarItem>
+                <TextBlock FontFamily="Segoe UI" FontSize="11"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Text="FACTURAEMAIL — CM Capital Markets · Ochandiano, 2 · 28023 Madrid"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock FontFamily="Segoe UI" FontSize="11"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:HH:mm}'}"
+                           xmlns:sys="clr-namespace:System;assembly=mscorlib"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- ── Contenido principal ── -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <views:ConsultaFacturasView Margin="4"/>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

@@ -4,6 +4,18 @@
              xmlns:local="clr-namespace:FacturacionMail"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Assets/Styles/Colors.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/Controls.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/DataGrid.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters globales -->
+            <local:InvertBoolConverter               x:Key="InvertBool"/>
+            <local:StringToVisibilityConverter       x:Key="StringToVisibility"/>
+            <local:InvertBoolToVisibilityConverter   x:Key="InvertBoolToVisibility"/>
+            <BooleanToVisibilityConverter             x:Key="BoolToVisibility"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
