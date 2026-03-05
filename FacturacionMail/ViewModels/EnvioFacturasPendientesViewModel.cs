@@ -1,0 +1,277 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using FacturacionMail.Data;
+using FacturacionMail.Models;
+using FacturacionMail.Services;
+
+namespace FacturacionMail.ViewModels;
+
+public partial class EnvioFacturasPendientesViewModel : ObservableObject
+{
+    private readonly IFacturaService _facturaService;
+    private readonly IEmailService   _emailService;
+
+    // ── Colecciones ───────────────────────────────────────────────────
+
+    public ObservableCollection<Cliente>       Clientes   { get; } = [];
+    public ObservableCollection<ListaEmail>    Listas     { get; } = [];
+    public ObservableCollection<DireccionEmail> Direcciones { get; } = [];
+    public ObservableCollection<Factura>       Facturas   { get; } = [];
+
+    // ── Selección ─────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EnviarMailCommand))]
+    private Cliente? _clienteSeleccionado;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EnviarMailCommand))]
+    private ListaEmail? _listaSeleccionada;
+
+    // ── Estado UI ─────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    private bool _listasVisibles = false;
+
+    [ObservableProperty]
+    private bool _detalleVisible = false;
+
+    [ObservableProperty]
+    private bool _ocupado = false;
+
+    [ObservableProperty]
+    private string _mensajeEstado = string.Empty;
+
+    [ObservableProperty]
+    private bool _seleccionarTodasDirecciones = false;
+
+    [ObservableProperty]
+    private bool _seleccionarTodasFacturas = false;
+
+    private bool _isUpdatingSelection = false;
+
+    partial void OnSeleccionarTodasDireccionesChanged(bool value)
+    {
+        if (_isUpdatingSelection) return;
+        _isUpdatingSelection = true;
+        foreach (var d in Direcciones) d.Seleccionada = value;
+        _isUpdatingSelection = false;
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnSeleccionarTodasFacturasChanged(bool value)
+    {
+        if (_isUpdatingSelection) return;
+        _isUpdatingSelection = true;
+        foreach (var f in Facturas) f.Seleccionada = value;
+        _isUpdatingSelection = false;
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
+
+    // ── Email ─────────────────────────────────────────────────────────
+
+    [ObservableProperty]
+    private string _asuntoEmail = "Facturas pendientes — CM Capital Markets";
+
+    [ObservableProperty]
+    private string _cuerpoEmail =
+        "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es";
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(InsertarDireccionCommand))]
+    private string _nuevaDireccion = string.Empty;
+
+    // ── Constructor ───────────────────────────────────────────────────
+
+    public EnvioFacturasPendientesViewModel()
+    {
+        _facturaService = new MockDataService();
+        _emailService   = (IEmailService)_facturaService;
+
+        _ = CargarClientesAsync();
+    }
+
+    // ── Reactive handlers ─────────────────────────────────────────────
+
+    partial void OnClienteSeleccionadoChanged(Cliente? value)
+    {
+        Listas.Clear();
+        Direcciones.Clear();
+        Facturas.Clear();
+        DetalleVisible  = false;
+        ListasVisibles  = false;
+        MensajeEstado   = string.Empty;
+        ListaSeleccionada = null;
+
+        if (value is not null)
+            _ = CargarListasAsync(value.Codigo);
+    }
+
+    partial void OnListaSeleccionadaChanged(ListaEmail? value)
+    {
+        Direcciones.Clear();
+        Facturas.Clear();
+        DetalleVisible = false;
+        MensajeEstado  = string.Empty;
+
+        if (value is not null)
+            _ = CargarDetalleAsync(value.Id);
+    }
+
+    // ── Comandos privados async ────────────────────────────────────────
+
+    private async Task CargarClientesAsync()
+    {
+        Ocupado = true;
+        try
+        {
+            var clientes = await _facturaService.ObtenerClientesAsync();
+            Clientes.Clear();
+            // Mostrar solo clientes únicos (por Codigo) para el combo
+            foreach (var c in clientes.DistinctBy(c => c.Codigo))
+                Clientes.Add(c);
+        }
+        catch (Exception ex)
+        {
+            MensajeEstado = $"Error al cargar clientes: {ex.Message}";
+        }
+        finally
+        {
+            Ocupado = false;
+        }
+    }
+
+    private async Task CargarListasAsync(int codigoCliente)
+    {
+        Ocupado = true;
+        try
+        {
+            var listas = await _emailService.ObtenerListasAsync(codigoCliente);
+            Listas.Clear();
+            foreach (var l in listas)
+                Listas.Add(l);
+
+            ListasVisibles = Listas.Any();
+
+            if (!Listas.Any())
+                MensajeEstado = "Este cliente no tiene listas de envío configuradas.";
+        }
+        catch (Exception ex)
+        {
+            MensajeEstado = $"Error al cargar listas: {ex.Message}";
+        }
+        finally
+        {
+            Ocupado = false;
+        }
+    }
+
+    private async Task CargarDetalleAsync(int listaId)
+    {
+        Ocupado = true;
+        try
+        {
+            var dirs     = await _emailService.ObtenerDireccionesPorListaAsync(listaId);
+            var facturas = await _facturaService.ObtenerFacturasAsync(
+                DateTime.Now.ToString("MM-yyyy"),
+                ClienteSeleccionado!.Codigo, ClienteSeleccionado.Codigo,
+                0, 0, true);
+
+            Direcciones.Clear();
+            foreach (var d in dirs) Direcciones.Add(d);
+
+            Facturas.Clear();
+            foreach (var f in facturas) Facturas.Add(f);
+
+            DetalleVisible  = true;
+            MensajeEstado   = $"{Facturas.Count} factura(s) pendiente(s) · {Direcciones.Count} destinatario(s)";
+        }
+        catch (Exception ex)
+        {
+            MensajeEstado = $"Error al cargar detalle: {ex.Message}";
+        }
+        finally
+        {
+            Ocupado = false;
+        }
+    }
+
+    // ── Comandos ──────────────────────────────────────────────────────
+
+    [RelayCommand(CanExecute = nameof(CanEnviar))]
+    private async Task EnviarMailAsync()
+    {
+        Ocupado = true;
+        MensajeEstado = "Enviando correo...";
+        try
+        {
+            var selDirs  = Direcciones.Where(d => d.Seleccionada).ToList();
+            var selFact  = Facturas.Where(f => f.Seleccionada).ToList();
+
+            if (!selDirs.Any())
+            {
+                MensajeEstado = "Selecciona al menos un destinatario.";
+                return;
+            }
+            if (!selFact.Any())
+            {
+                MensajeEstado = "Selecciona al menos una factura.";
+                return;
+            }
+
+            await _emailService.EnviarMailAsync(AsuntoEmail, CuerpoEmail, selDirs, selFact);
+            MensajeEstado = $"✓ Correo enviado a {selDirs.Count} destinatario(s) con {selFact.Count} factura(s).";
+        }
+        catch (Exception ex)
+        {
+            MensajeEstado = $"Error al enviar: {ex.Message}";
+        }
+        finally
+        {
+            Ocupado = false;
+        }
+    }
+
+    private bool CanEnviar() =>
+        !Ocupado && DetalleVisible &&
+        ClienteSeleccionado is not null &&
+        Direcciones.Any(d => d.Seleccionada);
+
+    [RelayCommand(CanExecute = nameof(CanInsertarDireccion))]
+    private void InsertarDireccion()
+    {
+        Direcciones.Add(new DireccionEmail
+        {
+            Id = Direcciones.Count + 1000,
+            Email = NuevaDireccion.Trim(),
+            Nombre = "Manual",
+            Seleccionada = true,
+            CodigoCliente = ClienteSeleccionado?.Codigo ?? 0
+        });
+        NuevaDireccion = string.Empty;
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool CanInsertarDireccion() => !string.IsNullOrWhiteSpace(NuevaDireccion);
+
+    [RelayCommand]
+    private void EliminarDireccion(DireccionEmail? dir)
+    {
+        if (dir is not null) Direcciones.Remove(dir);
+    }
+
+    [RelayCommand]
+    private void Limpiar()
+    {
+        ClienteSeleccionado = null;
+        ListaSeleccionada   = null;
+        Listas.Clear();
+        Direcciones.Clear();
+        Facturas.Clear();
+        ListasVisibles  = false;
+        DetalleVisible  = false;
+        MensajeEstado   = string.Empty;
+    }
+}

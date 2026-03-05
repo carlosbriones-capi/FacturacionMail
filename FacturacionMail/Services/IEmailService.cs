@@ -18,6 +18,16 @@ public interface IEmailService
     Task<IEnumerable<DireccionEmail>> ObtenerDireccionesAsync(int codigoCliente);
 
     /// <summary>
+    /// Obtiene las listas de envío (gablistamail) disponibles para un cliente.
+    /// </summary>
+    Task<IEnumerable<ListaEmail>> ObtenerListasAsync(int codigoCliente);
+
+    /// <summary>
+    /// Obtiene los destinatarios pertenecientes a una lista de envío concreta.
+    /// </summary>
+    Task<IEnumerable<DireccionEmail>> ObtenerDireccionesPorListaAsync(int listaId);
+
+    /// <summary>
     /// Envía las facturas seleccionadas a las direcciones seleccionadas.
     /// </summary>
     Task<bool> EnviarMailAsync(
@@ -25,4 +35,9 @@ public interface IEmailService
         string cuerpo,
         IEnumerable<DireccionEmail> destinatarios,
         IEnumerable<Factura> facturas);
+
+    /// <summary>
+    /// Obtiene el estado de los envíos de mail.
+    /// </summary>
+    Task<IEnumerable<EstadoEnvioMail>> ObtenerEstadoEnviosAsync();
 }
