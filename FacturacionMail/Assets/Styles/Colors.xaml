@@ -1,40 +1,40 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- ===== PALETA CORPORATIVA CLARA ===== -->
+    <!-- ===== PALETA CORPORATIVA MODERNA ===== -->
 
     <!-- Fondos -->
-    <Color x:Key="AppBackgroundColor">#F0F4F8</Color>
+    <Color x:Key="AppBackgroundColor">#F8FAFC</Color>
     <Color x:Key="SurfaceColor">#FFFFFF</Color>
-    <Color x:Key="SurfaceAltColor">#F7FAFC</Color>
-    <Color x:Key="BorderColor">#CBD5E0</Color>
+    <Color x:Key="SurfaceAltColor">#F1F5F9</Color>
+    <Color x:Key="BorderColor">#CBD5E1</Color>
     <Color x:Key="BorderLightColor">#E2E8F0</Color>
 
-    <!-- Acento primario: azul corporativo -->
-    <Color x:Key="PrimaryColor">#1E5FAD</Color>
-    <Color x:Key="PrimaryDarkColor">#154A8A</Color>
-    <Color x:Key="PrimaryLightColor">#3B82F6</Color>
-    <Color x:Key="PrimaryVeryLightColor">#EBF4FF</Color>
+    <!-- Acento primario: azul moderno -->
+    <Color x:Key="PrimaryColor">#2563EB</Color>      <!-- Blue 600 -->
+    <Color x:Key="PrimaryDarkColor">#1D4ED8</Color>  <!-- Blue 700 -->
+    <Color x:Key="PrimaryLightColor">#60A5FA</Color> <!-- Blue 400 -->
+    <Color x:Key="PrimaryVeryLightColor">#EFF6FF</Color> <!-- Blue 50 -->
 
     <!-- Texto -->
-    <Color x:Key="TextPrimaryColor">#1A202C</Color>
-    <Color x:Key="TextSecondaryColor">#4A5568</Color>
-    <Color x:Key="TextMutedColor">#718096</Color>
+    <Color x:Key="TextPrimaryColor">#0F172A</Color>   <!-- Slate 900 -->
+    <Color x:Key="TextSecondaryColor">#334155</Color> <!-- Slate 700 -->
+    <Color x:Key="TextMutedColor">#64748B</Color>     <!-- Slate 500 -->
     <Color x:Key="TextOnPrimaryColor">#FFFFFF</Color>
 
     <!-- Estados -->
-    <Color x:Key="SuccessColor">#38A169</Color>
-    <Color x:Key="WarningColor">#D69E2E</Color>
-    <Color x:Key="DangerColor">#E53E3E</Color>
-    <Color x:Key="InfoColor">#3182CE</Color>
+    <Color x:Key="SuccessColor">#10B981</Color>
+    <Color x:Key="WarningColor">#F59E0B</Color>
+    <Color x:Key="DangerColor">#EF4444</Color>
+    <Color x:Key="InfoColor">#3B82F6</Color>
 
     <!-- Filas de tabla -->
-    <Color x:Key="RowAltColor">#F7FAFC</Color>
-    <Color x:Key="RowHoverColor">#EBF4FF</Color>
-    <Color x:Key="RowSelectedColor">#BFDBFE</Color>
+    <Color x:Key="RowAltColor">#F8FAFC</Color>
+    <Color x:Key="RowHoverColor">#EFF6FF</Color>
+    <Color x:Key="RowSelectedColor">#DBEAFE</Color>
 
     <!-- Gradiente header -->
-    <Color x:Key="HeaderGradientStartColor">#1E5FAD</Color>
+    <Color x:Key="HeaderGradientStartColor">#1E40AF</Color>
     <Color x:Key="HeaderGradientEndColor">#2563EB</Color>
 
     <!-- ===== BRUSHES ===== -->
@@ -66,11 +66,6 @@
     <LinearGradientBrush x:Key="HeaderGradientBrush" StartPoint="0,0" EndPoint="1,0">
         <GradientStop Color="{StaticResource HeaderGradientStartColor}" Offset="0"/>
         <GradientStop Color="{StaticResource HeaderGradientEndColor}"   Offset="1"/>
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="PrimaryButtonGradientBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="{StaticResource PrimaryLightColor}" Offset="0"/>
-        <GradientStop Color="{StaticResource PrimaryColor}"      Offset="1"/>
     </LinearGradientBrush>
 
 </ResourceDictionary>

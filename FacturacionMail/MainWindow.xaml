@@ -90,7 +90,7 @@
         <!-- ── Contenido principal ── -->
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
-            <views:ConsultaFacturasView Margin="4"/>
+            <views:ConsultaFacturasView/>
         </ScrollViewer>
     </DockPanel>
 </Window>

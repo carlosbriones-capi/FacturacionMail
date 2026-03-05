@@ -7,12 +7,12 @@
 
     <!-- ===== BOTÓN PRIMARIO ===== -->
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-        <Setter Property="Background"   Value="{StaticResource PrimaryButtonGradientBrush}"/>
+        <Setter Property="Background"   Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Foreground"   Value="{StaticResource TextOnPrimaryBrush}"/>
         <Setter Property="FontFamily"   Value="Segoe UI"/>
         <Setter Property="FontSize"     Value="13"/>
-        <Setter Property="FontWeight"   Value="SemiBold"/>
-        <Setter Property="Padding"      Value="18,10"/>
+        <Setter Property="FontWeight"   Value="Medium"/>
+        <Setter Property="Padding"      Value="16,8"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor"       Value="Hand"/>
         <Setter Property="Template">
@@ -20,27 +20,57 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="border"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             SnapsToDevicePixels="True">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#1E5FAD" BlurRadius="8" ShadowDepth="2" Opacity="0.35"/>
-                        </Border.Effect>
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Margin="{TemplateBinding Padding}"/>
+                        <!-- Transición suave -->
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" 
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" 
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="{StaticResource PrimaryDarkColor}" 
+                                                        Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" 
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="{StaticResource PrimaryColor}" 
+                                                        Duration="0:0:0.1" />
+                                        <DoubleAnimation Storyboard.TargetName="border"
+                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                         To="0.97" Duration="0:0:0.05"/>
+                                        <DoubleAnimation Storyboard.TargetName="border"
+                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                         To="0.97" Duration="0:0:0.05"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        
+                        <Border.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" CenterX="0.5" CenterY="0.5" />
+                        </Border.RenderTransform>
+                        <Border.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5" />
+                        </Border.RenderTransformOrigin>
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryDarkBrush}"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="RenderTransform">
-                                <Setter.Value><ScaleTransform ScaleX="0.98" ScaleY="0.98"/></Setter.Value>
-                            </Setter>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="border" Property="Opacity" Value="0.5"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -49,13 +79,13 @@
     <!-- ===== BOTÓN SECUNDARIO ===== -->
     <Style x:Key="SecondaryButtonStyle" TargetType="Button">
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="Foreground"      Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextSecondaryBrush}"/>
         <Setter Property="FontFamily"      Value="Segoe UI"/>
         <Setter Property="FontSize"        Value="13"/>
-        <Setter Property="FontWeight"      Value="SemiBold"/>
-        <Setter Property="Padding"         Value="18,10"/>
-        <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="BorderBrush"     Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="FontWeight"      Value="Medium"/>
+        <Setter Property="Padding"         Value="16,8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
         <Setter Property="Cursor"          Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -64,19 +94,44 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             SnapsToDevicePixels="True">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
-                                          Margin="{TemplateBinding Padding}"/>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource SurfaceAltColor}" Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="{StaticResource BorderLightColor}" Duration="0:0:0.1" />
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="0.97" Duration="0:0:0.05"/>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="0.97" Duration="0:0:0.05"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        
+                        <Border.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                        </Border.RenderTransform>
+                        <Border.RenderTransformOrigin>
+                            <Point X="0.5" Y="0.5" />
+                        </Border.RenderTransformOrigin>
+
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryVeryLightBrush}"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="border" Property="Opacity" Value="0.5"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -84,13 +139,32 @@
 
     <!-- ===== BOTÓN PELIGRO ===== -->
     <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
-        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
         <Setter Property="Foreground"  Value="{StaticResource DangerBrush}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#FFF5F5"/>
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FFF5F5" Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FED7D7" Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- ===== TEXT BOX ===== -->
@@ -100,32 +174,38 @@
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="Padding"         Value="10,8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding"         Value="8,5"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="SelectionBrush"  Value="{StaticResource PrimaryLightBrush}"/>
+        <Setter Property="CaretBrush"      Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Grid>
-                        <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                SnapsToDevicePixels="True">
-                            <ScrollViewer x:Name="PART_ContentHost"
-                                          Focusable="False"
-                                          Margin="{TemplateBinding Padding}"
-                                          VerticalScrollBarVisibility="Hidden"/>
-                        </Border>
-                    </Grid>
+                    <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            SnapsToDevicePixels="True">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      Focusable="False"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalScrollBarVisibility="Hidden"/>
+                    </Border>
                     <ControlTemplate.Triggers>
+                        <!-- Hover: cambiar ligeramente el borde pero sin engordar -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#A0AEC0"/>
+                        </Trigger>
+                        <!-- Focus: Borde azul destacado y ligera sombra -->
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
-                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryLightBrush}"/>
+                            <Setter TargetName="border" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Color="{StaticResource PrimaryColor}" BlurRadius="3" ShadowDepth="0" Opacity="0.3"/>
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -140,18 +220,19 @@
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1.5"/>
-        <Setter Property="Padding"         Value="8,6"/>
-        <Setter Property="Height"          Value="34"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding"         Value="8,4"/>
+        <Setter Property="Height"          Value="30"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
     <!-- ===== LABEL ===== -->
     <Style x:Key="FormLabelStyle" TargetType="TextBlock">
         <Setter Property="FontFamily"  Value="Segoe UI"/>
-        <Setter Property="FontSize"    Value="13"/>
+        <Setter Property="FontSize"    Value="12"/>
         <Setter Property="FontWeight"  Value="SemiBold"/>
         <Setter Property="Foreground"  Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="Margin"      Value="2,0,0,5"/>
+        <Setter Property="Margin"      Value="2,0,0,4"/>
     </Style>
 
     <!-- ===== GROUP BOX (card) ===== -->
@@ -160,15 +241,15 @@
         <Setter Property="BorderBrush"     Value="{StaticResource BorderLightBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius"    Value="12"/>
-        <Setter Property="Padding"         Value="20,16"/>
+        <Setter Property="Padding"         Value="16,14"/>
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect Color="#718096" BlurRadius="15" ShadowDepth="3" Opacity="0.12"/>
+                <DropShadowEffect Color="#000000" BlurRadius="6" ShadowDepth="1" Opacity="0.05"/>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- ===== RADIO BUTTON ===== -->
+    <!-- ===== RADIO BUTTON ====== -->
     <Style x:Key="ModernRadioStyle" TargetType="RadioButton">
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize"   Value="13"/>
@@ -181,9 +262,9 @@
     <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
         <Setter Property="FontFamily"  Value="Segoe UI"/>
         <Setter Property="FontSize"    Value="12"/>
-        <Setter Property="FontWeight"  Value="Bold"/>
-        <Setter Property="Foreground"  Value="{StaticResource PrimaryBrush}"/>
-        <Setter Property="Margin"      Value="0,0,0,10"/>
+        <Setter Property="FontWeight"  Value="SemiBold"/>
+        <Setter Property="Foreground"  Value="{StaticResource PrimaryDarkBrush}"/>
+        <Setter Property="Margin"      Value="0,0,0,8"/>
     </Style>
 
     <!-- ===== CHECKBOX ===== -->

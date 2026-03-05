@@ -6,484 +6,302 @@
              xmlns:vm="clr-namespace:FacturacionMail.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="750" d:DesignWidth="1150"
-             Background="{StaticResource AppBackgroundBrush}">
+             Background="{StaticResource AppBackgroundBrush}"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- Panel de filtros -->
-            <RowDefinition Height="Auto"/>  <!-- Barra de estado -->
-            <RowDefinition Height="*"/>     <!-- Zona de resultados (email + tablas) -->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- ROW 0 — PANEL DE FILTROS                                        -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
         <Border Grid.Row="0"
                 Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderLightBrush}"
-                BorderThickness="0,0,0,1"
-                Padding="28,20,28,20">
+                Padding="24,20"
+                Margin="0,0,0,12"
+                CornerRadius="0,0,12,12">
             <Border.Effect>
-                <DropShadowEffect Color="#A0AEC0" BlurRadius="10" ShadowDepth="3" Opacity="0.12"/>
+                <DropShadowEffect Color="#000000" BlurRadius="12" ShadowDepth="2" Opacity="0.06"/>
             </Border.Effect>
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>   <!-- Label Criterios -->
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="Auto"/>   <!-- Clientes -->
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="Auto"/>   <!-- Facturas -->
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="Auto"/>   <!-- Mes-Año -->
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="Auto"/>   <!-- Tipo -->
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>   <!-- Botones -->
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Título sección -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock Text="CONSULTA DE"
-                               FontFamily="Segoe UI" FontSize="9"
-                               FontWeight="Bold"
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="🔍" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Filtros de Búsqueda"
+                                   FontFamily="Segoe UI" FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock Text="Seleccione criterios"
+                               FontFamily="Segoe UI" FontSize="12"
                                Foreground="{StaticResource TextMutedBrush}"/>
-                    <TextBlock Text="Facturas"
-                               FontFamily="Segoe UI" FontSize="22"
-                               FontWeight="Light"
-                               Foreground="{StaticResource PrimaryBrush}"/>
                 </StackPanel>
 
-                <!-- Separador vertical -->
-                <Rectangle Grid.Column="1" Width="1" Height="48"
-                           Fill="{StaticResource BorderLightBrush}"
-                           VerticalAlignment="Center"/>
+                <Rectangle Grid.Column="1" Width="1" Height="40" Fill="{StaticResource BorderLightBrush}"/>
 
-                <!-- Rango Clientes -->
                 <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                    <TextBlock Text="CLIENTES" Style="{StaticResource FormLabelStyle}" FontSize="10"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="75"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="75"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="4"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="Desde" FontSize="10"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   Margin="2,0,0,2"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2"
-                                   Text="Hasta" FontSize="10"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   Margin="2,0,0,2"/>
-                        <TextBox Grid.Row="2" Grid.Column="0"
-                                 Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding ClienteDesde, UpdateSourceTrigger=PropertyChanged}"
-                                 TextAlignment="Center"/>
-                        <TextBox Grid.Row="2" Grid.Column="2"
-                                 Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding ClienteHasta, UpdateSourceTrigger=PropertyChanged}"
-                                 TextAlignment="Center"/>
-                    </Grid>
+                    <TextBlock Text="RANGO DE CLIENTES" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding ClienteDesde, UpdateSourceTrigger=PropertyChanged}" Width="70" TextAlignment="Center"/>
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="8,0" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding ClienteHasta, UpdateSourceTrigger=PropertyChanged}" Width="70" TextAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <!-- Separador -->
-                <Rectangle Grid.Column="3" Width="1" Height="48"
-                           Fill="{StaticResource BorderLightBrush}"
-                           VerticalAlignment="Center"/>
+                <Rectangle Grid.Column="3" Width="1" Height="40" Fill="{StaticResource BorderLightBrush}"/>
 
-                <!-- Rango Facturas -->
                 <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                    <TextBlock Text="FACTURAS" Style="{StaticResource FormLabelStyle}" FontSize="10"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="75"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="75"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="4"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="Desde" FontSize="10"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   Margin="2,0,0,2"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2"
-                                   Text="Hasta" FontSize="10"
-                                   Foreground="{StaticResource TextMutedBrush}"
-                                   Margin="2,0,0,2"/>
-                        <TextBox Grid.Row="2" Grid.Column="0"
-                                 Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding FacturaDesde, UpdateSourceTrigger=PropertyChanged}"
-                                 TextAlignment="Center"/>
-                        <TextBox Grid.Row="2" Grid.Column="2"
-                                 Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding FacturaHasta, UpdateSourceTrigger=PropertyChanged}"
-                                 TextAlignment="Center"/>
-                    </Grid>
+                    <TextBlock Text="RANGO DE FACTURAS" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding FacturaDesde, UpdateSourceTrigger=PropertyChanged}" Width="70" TextAlignment="Center"/>
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="8,0" Foreground="{StaticResource TextMutedBrush}"/>
+                        <TextBox Style="{StaticResource ModernTextBoxStyle}" Text="{Binding FacturaHasta, UpdateSourceTrigger=PropertyChanged}" Width="70" TextAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <!-- Separador -->
-                <Rectangle Grid.Column="5" Width="1" Height="48"
-                           Fill="{StaticResource BorderLightBrush}"
-                           VerticalAlignment="Center"/>
+                <Rectangle Grid.Column="5" Width="1" Height="40" Fill="{StaticResource BorderLightBrush}"/>
 
-                <!-- Mes-Año -->
-                <StackPanel Grid.Column="6" VerticalAlignment="Center">
-                    <TextBlock Text="FACTURACIÓN" Style="{StaticResource FormLabelStyle}" FontSize="10"/>
-                    <TextBlock Text="Mes - Año" FontSize="10"
-                               Foreground="{StaticResource TextMutedBrush}"
-                               Margin="2,0,0,2"/>
-                    <Border Background="{StaticResource PrimaryVeryLightBrush}"
-                            BorderBrush="{StaticResource PrimaryBrush}"
-                            BorderThickness="2" CornerRadius="6"
-                            Padding="10,4" Width="90">
+                <StackPanel Grid.Column="6" Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel Margin="0,0,24,0">
+                        <TextBlock Text="MES Y AÑO" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
                         <TextBox Style="{StaticResource ModernTextBoxStyle}"
                                  Text="{Binding MesAnio, UpdateSourceTrigger=PropertyChanged}"
-                                 FontSize="16" FontWeight="Bold"
-                                 Foreground="{StaticResource PrimaryBrush}"
-                                 TextAlignment="Center"
-                                 BorderThickness="0"
-                                 Background="Transparent"
-                                 Padding="0"/>
-                    </Border>
+                                 FontSize="13" FontWeight="SemiBold"
+                                 Foreground="{StaticResource PrimaryDarkBrush}"
+                                 TextAlignment="Center" Width="90"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="TIPO" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <RadioButton Content="Actuales" Style="{StaticResource ModernRadioStyle}" IsChecked="{Binding SoloActuales}" Margin="0,0,12,0"/>
+                            <RadioButton Content="Todas" Style="{StaticResource ModernRadioStyle}" IsChecked="{Binding SoloActuales, Converter={StaticResource InvertBool}}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
 
-                <!-- Separador -->
-                <Rectangle Grid.Column="7" Width="1" Height="48"
-                           Fill="{StaticResource BorderLightBrush}"
-                           VerticalAlignment="Center"/>
-
-                <!-- Tipo de Facturas -->
-                <StackPanel Grid.Column="8" VerticalAlignment="Center">
-                    <TextBlock Text="TIPO" Style="{StaticResource FormLabelStyle}" FontSize="10"/>
-                    <RadioButton Content="Actuales"
-                                 Style="{StaticResource ModernRadioStyle}"
-                                 IsChecked="{Binding SoloActuales}"
-                                 Margin="0,6,0,0"/>
-                    <RadioButton Content="Todas"
-                                 Style="{StaticResource ModernRadioStyle}"
-                                 IsChecked="{Binding SoloActuales, Converter={StaticResource InvertBool}}"
-                                 Margin="0,4,0,0"/>
-                </StackPanel>
-
-                <!-- Botones -->
-                <StackPanel Grid.Column="10"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Right">
-                    <Button Content="↺  Limpiar"
-                            Style="{StaticResource SecondaryButtonStyle}"
+                <StackPanel Grid.Column="8" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SecondaryButtonStyle}"
                             Command="{Binding LimpiarCriteriosCommand}"
-                            Padding="16,10" Margin="0,0,10,0"/>
-                    <Button Content="✕  Salir"
-                            Style="{StaticResource DangerButtonStyle}"
+                            Padding="12,6" Margin="0,0,8,0" ToolTip="Limpiar">
+                        <TextBlock Text="↺" FontSize="15" Margin="0" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Style="{StaticResource DangerButtonStyle}"
                             Click="OnSalirClick"
-                            Padding="16,10" Margin="0,0,14,0"/>
-                    <Button Content="▶  Procesar Selección"
-                            Style="{StaticResource PrimaryButtonStyle}"
+                            Padding="12,6" Margin="0,0,12,0" ToolTip="Salir">
+                        <TextBlock Text="✕" FontSize="12" Margin="0" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Style="{StaticResource PrimaryButtonStyle}"
                             Command="{Binding ProcesarSeleccionCommand}"
-                            Padding="20,10"
-                            FontSize="14"/>
+                            Padding="16,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="▶" FontSize="11" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Procesar" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- ROW 1 — BARRA DE ESTADO                                         -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <Border Grid.Row="1"
-                Visibility="{Binding MensajeEstado, Converter={StaticResource StringToVisibility}}"
-                Padding="28,10">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="{StaticResource PrimaryVeryLightBrush}"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Ocupado}" Value="True">
-                            <Setter Property="Background" Value="#FFF3CD"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <StackPanel Orientation="Horizontal">
-                <ProgressBar IsIndeterminate="True"
-                             Visibility="{Binding Ocupado, Converter={StaticResource BoolToVisibility}}"
-                             Width="100" Height="6"
-                             Margin="0,0,14,0"
-                             Foreground="{StaticResource PrimaryBrush}"
-                             Background="Transparent"/>
-                <TextBlock Text="{Binding MensajeEstado}"
-                           FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
-                           VerticalAlignment="Center">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Ocupado}" Value="True">
-                                    <Setter Property="Foreground" Value="#856404"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </StackPanel>
-        </Border>
-
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- ROW 2 — ZONA DE RESULTADOS (visible solo tras Procesar)         -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <Grid Grid.Row="2"
+        <Grid Grid.Row="2" Margin="24,16,24,20"
               Visibility="{Binding ResultadosVisibles, Converter={StaticResource BoolToVisibility}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/> <!-- Panel email -->
-                <RowDefinition Height="*"/>    <!-- Tablas -->
-            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.4*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="1.6*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- ── Panel email ─────────────────────────────────────── -->
-            <Border Grid.Row="0"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderLightBrush}"
-                    BorderThickness="0,0,0,1"
-                    Padding="28,18">
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="28"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="28"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- Asunto -->
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="📌  ASUNTO DEL EMAIL"
-                                   Style="{StaticResource SectionTitleStyle}"
-                                   FontSize="10" Margin="0,0,0,8"/>
-                        <TextBox Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
-                                 FontSize="13"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+                        <TextBlock Text="✉" FontSize="16" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Nuevo Mensaje"
+                                   FontFamily="Segoe UI" FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- Cuerpo -->
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="📝  CUERPO DEL MAIL"
-                                   Style="{StaticResource SectionTitleStyle}"
-                                   FontSize="10" Margin="0,0,0,8"/>
-                        <Border BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1.5" CornerRadius="5"
-                                Background="{StaticResource SurfaceAltBrush}">
-                            <TextBox Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
-                                     AcceptsReturn="True" TextWrapping="Wrap"
-                                     Height="60"
-                                     VerticalScrollBarVisibility="Auto"
-                                     BorderThickness="0" Padding="10,6"
-                                     FontFamily="Consolas" FontSize="12"
-                                     Background="Transparent"
-                                     Foreground="{StaticResource TextPrimaryBrush}"/>
-                        </Border>
-                    </StackPanel>
+                    <TextBlock Grid.Row="1" Text="PARA (DESTINATARIOS)" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
 
-                    <!-- Botón Envía Mail -->
-                    <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                        <Button Command="{Binding EnviarMailCommand}"
-                                Padding="22,14"
-                                FontSize="14">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Ocupado}" Value="True">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="✉" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock VerticalAlignment="Center">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Text" Value="Enviar Mail"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Ocupado}" Value="True">
-                                                    <Setter Property="Text" Value="Enviando..."/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
+                    <Grid Grid.Row="2" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 Background="{StaticResource SurfaceAltBrush}"
+                                 Text="{Binding NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
+                                 Padding="9,6" FontSize="13"/>
+                        <Button Grid.Column="2"
+                                Content="+"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Height="38" Width="40"
+                                FontSize="20" FontWeight="Bold"
+                                Padding="0,0,0,2"
+                                Command="{Binding InsertarDireccionCommand}"
+                                ToolTip="Añadir a la lista"/>
+                    </Grid>
+
+                    <DataGrid Grid.Row="3"
+                              ItemsSource="{Binding Direcciones}"
+                              Style="{StaticResource ModernDataGridStyle}"
+                              ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
+                              RowStyle="{StaticResource ModernDataGridRowStyle}"
+                              CellStyle="{StaticResource ModernDataGridCellStyle}"
+                              BorderThickness="1"
+                              BorderBrush="{StaticResource BorderLightBrush}"
+                              RowHeight="35"
+                              ColumnHeaderHeight="37"
+                              Height="317"
+                              Margin="0,0,0,16"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="✓" Width="40" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="E-mail" Binding="{Binding Email}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <TextBlock Grid.Row="4" Text="ASUNTO" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
+                    <TextBox Grid.Row="5"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
+                             FontSize="13" Padding="9,6"
+                             Background="{StaticResource SurfaceAltBrush}"
+                             Margin="0,0,0,16"/>
+
+                    <TextBlock Grid.Row="6" Text="MENSAJE" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
+                    <TextBox Grid.Row="7"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" TextWrapping="Wrap"
+                             Padding="9,6"
+                             VerticalScrollBarVisibility="Auto"
+                             FontFamily="Consolas" FontSize="13"
+                             Background="{StaticResource SurfaceAltBrush}"
+                             Margin="0,0,0,16"/>
+
+                    <Button Grid.Row="8"
+                            Command="{Binding EnviarMailCommand}"
+                            FontSize="14" Padding="32,10" HorizontalAlignment="Right">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Ocupado}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✉" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="Enviar Correo"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Ocupado}" Value="True">
+                                                <Setter Property="Text" Value="Enviando..."/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </Border>
 
-            <!-- ── Tablas ─────────────────────────────────────────── -->
-            <Grid Grid.Row="1" Margin="20,16,20,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="1.8*"/>
-                </Grid.ColumnDefinitions>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Tabla Direcciones -->
-                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <Border Grid.Row="0"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource BorderLightBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="16,12">
+                        <DockPanel>
+                            <TextBlock Text="FACTURAS ADJUNTAS A ENVIAR"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="13"
+                                       VerticalAlignment="Center"/>
+                            <Border DockPanel.Dock="Right"
+                                    Background="{StaticResource SurfaceAltBrush}" CornerRadius="12"
+                                    Padding="8,2" HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding Facturas.Count}"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           FontSize="11" FontWeight="Bold"/>
+                            </Border>
+                        </DockPanel>
+                    </Border>
 
-                        <!-- Header -->
-                        <Border Grid.Row="0"
-                                Background="{StaticResource HeaderGradientBrush}"
-                                CornerRadius="10,10,0,0" Padding="16,12">
-                            <DockPanel>
-                                <TextBlock Text="📧  DIRECCIONES DE ENVÍO"
-                                           Foreground="White"
-                                           FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="12"
-                                           VerticalAlignment="Center"/>
-                                <Border DockPanel.Dock="Right"
-                                        Background="White" CornerRadius="12"
-                                        Padding="8,2" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding Direcciones.Count}"
-                                               Foreground="{StaticResource PrimaryBrush}"
-                                               FontSize="11" FontWeight="Bold"/>
-                                </Border>
-                            </DockPanel>
-                        </Border>
-
-                        <!-- Grid -->
-                        <DataGrid Grid.Row="1"
-                                  ItemsSource="{Binding Direcciones}"
-                                  Style="{StaticResource ModernDataGridStyle}"
-                                  ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
-                                  RowStyle="{StaticResource ModernDataGridRowStyle}"
-                                  CellStyle="{StaticResource ModernDataGridCellStyle}"
-                                  BorderThickness="0">
-                            <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Sel" Width="50" CanUserSort="False">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                      HorizontalAlignment="Center"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="E-mail" Binding="{Binding Email}"  Width="1.5*"/>
-                                <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-
-                        <!-- Inserta Dirección -->
-                        <Border Grid.Row="2"
-                                Background="#F7FAFC"
-                                BorderBrush="{StaticResource BorderLightBrush}"
-                                BorderThickness="0,1,0,0"
-                                CornerRadius="0,0,12,12"
-                                Padding="16,14">
-                            <StackPanel>
-                                <TextBlock Text="AÑADIR DIRECCIÓN"
-                                           Style="{StaticResource SectionTitleStyle}"
-                                           FontSize="10" Margin="2,0,0,10"/>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="10"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0"
-                                             Style="{StaticResource ModernTextBoxStyle}"
-                                             Background="White"
-                                             Text="{Binding NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <Button Grid.Column="2"
-                                            Content="+"
-                                            Style="{StaticResource PrimaryButtonStyle}"
-                                            Padding="16,8" FontSize="20" FontWeight="Bold"
-                                            Command="{Binding InsertarDireccionCommand}"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <!-- Tabla Facturas -->
-                <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Header -->
-                        <Border Grid.Row="0"
-                                Background="{StaticResource HeaderGradientBrush}"
-                                CornerRadius="10,10,0,0" Padding="16,12">
-                            <DockPanel>
-                                <TextBlock Text="🧾  FACTURAS A ENVIAR"
-                                           Foreground="White"
-                                           FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="12"
-                                           VerticalAlignment="Center"/>
-                                <Border DockPanel.Dock="Right"
-                                        Background="White" CornerRadius="12"
-                                        Padding="8,2" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding Facturas.Count}"
-                                               Foreground="{StaticResource PrimaryBrush}"
-                                               FontSize="11" FontWeight="Bold"/>
-                                </Border>
-                            </DockPanel>
-                        </Border>
-
-                        <!-- Grid -->
-                        <DataGrid Grid.Row="1"
-                                  ItemsSource="{Binding Facturas}"
-                                  Style="{StaticResource ModernDataGridStyle}"
-                                  ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
-                                  RowStyle="{StaticResource ModernDataGridRowStyle}"
-                                  CellStyle="{StaticResource ModernDataGridCellStyle}"
-                                  BorderThickness="0">
-                            <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Sel" Width="46" CanUserSort="False">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                      HorizontalAlignment="Center"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Nº Factura" Binding="{Binding NumeroFactura}" Width="90"/>
-                                <DataGridTextColumn Header="Archivo"    Binding="{Binding NombreArchivo}"  Width="110"/>
-                                <DataGridTextColumn Header="Cliente"    Binding="{Binding NombreCliente}"  Width="*"/>
-                                <DataGridTemplateColumn Header="Importe" Width="115">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Importe, StringFormat='{}{0:N2} €'}"
-                                                       TextAlignment="Right"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{StaticResource SuccessBrush}"
-                                                       VerticalAlignment="Center"
-                                                       Margin="0,0,10,0"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Mes-Año" Binding="{Binding MesAnio}" Width="80"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Grid>
-                </Border>
-            </Grid>
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Facturas}"
+                              Style="{StaticResource ModernDataGridStyle}"
+                              ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
+                              RowStyle="{StaticResource ModernDataGridRowStyle}"
+                              CellStyle="{StaticResource ModernDataGridCellStyle}"
+                              BorderThickness="0">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Seleccionar" Width="100" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Archivo" Binding="{Binding NombreArchivo}" Width="*"/>
+                            <DataGridTextColumn Header="Cliente" Binding="{Binding NombreCliente}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
         </Grid>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- ESTADO VACÍO — visible cuando no se han procesado facturas      -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
         <Grid Grid.Row="2"
               Visibility="{Binding ResultadosVisibles, Converter={StaticResource InvertBoolToVisibility}}">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5">
