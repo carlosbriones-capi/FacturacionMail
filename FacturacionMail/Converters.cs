@@ -12,10 +12,10 @@ public class InvertBoolConverter : IValueConverter
     public static readonly InvertBoolConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is bool b ? !b : value;
+        => value is bool b ? !b : false;
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is bool b ? !b : value;
+        => value is bool b ? !b : false;
 }
 
 /// <summary>
@@ -46,7 +46,7 @@ public class InvertBoolToVisibilityConverter : IValueConverter
     public static readonly InvertBoolToVisibilityConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is true
+        => value is bool b && b
             ? System.Windows.Visibility.Collapsed
             : System.Windows.Visibility.Visible;
 

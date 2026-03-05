@@ -39,6 +39,7 @@
         <Setter Property="FontSize"       Value="11"/>
         <Setter Property="FontWeight"     Value="SemiBold"/>
         <Setter Property="Padding"        Value="14,0"/>
+        <Setter Property="Margin"         Value="0,0,6,0"/>
         <Setter Property="Height"         Value="38"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
@@ -46,6 +47,7 @@
                 <ControlTemplate TargetType="DataGridColumnHeader">
                     <Border x:Name="headerBorder"
                             Padding="{TemplateBinding Padding}"
+                            CornerRadius="8,8,0,0"
                             SnapsToDevicePixels="True">
                         <Border.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
