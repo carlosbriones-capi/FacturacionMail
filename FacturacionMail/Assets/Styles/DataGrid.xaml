@@ -7,52 +7,66 @@
 
     <!-- ===== DATAGRID BASE ===== -->
     <Style x:Key="ModernDataGridStyle" TargetType="DataGrid">
-        <Setter Property="Background"             Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="BorderBrush"            Value="{StaticResource BorderLightBrush}"/>
-        <Setter Property="BorderThickness"        Value="1"/>
-        <Setter Property="RowBackground"          Value="{StaticResource SurfaceBrush}"/>
-        <Setter Property="AlternatingRowBackground" Value="{StaticResource RowAltBrush}"/>
-        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="Background"              Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="BorderBrush"             Value="Transparent"/>
+        <Setter Property="BorderThickness"         Value="0"/>
+        <Setter Property="RowBackground"           Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="AlternatingRowBackground" Value="#F4F8FA"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#E8EFF3"/>
         <Setter Property="VerticalGridLinesBrush"   Value="Transparent"/>
-        <Setter Property="FontFamily"             Value="Segoe UI"/>
-        <Setter Property="FontSize"               Value="13"/>
-        <Setter Property="Foreground"             Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="SelectionMode"          Value="Single"/>
-        <Setter Property="AutoGenerateColumns"    Value="False"/>
-        <Setter Property="CanUserAddRows"         Value="False"/>
-        <Setter Property="CanUserDeleteRows"      Value="False"/>
-        <Setter Property="CanUserReorderColumns"  Value="False"/>
-        <Setter Property="CanUserResizeRows"      Value="False"/>
-        <Setter Property="HeadersVisibility"      Value="Column"/>
-        <Setter Property="GridLinesVisibility"    Value="Horizontal"/>
-        <Setter Property="RowHeight"              Value="36"/>
-        <Setter Property="ColumnHeaderHeight"     Value="40"/>
-        <Setter Property="SelectionUnit"          Value="FullRow"/>
+        <Setter Property="FontFamily"              Value="Segoe UI"/>
+        <Setter Property="FontSize"                Value="13"/>
+        <Setter Property="Foreground"              Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="SelectionMode"           Value="Single"/>
+        <Setter Property="AutoGenerateColumns"     Value="False"/>
+        <Setter Property="CanUserAddRows"          Value="False"/>
+        <Setter Property="CanUserDeleteRows"       Value="False"/>
+        <Setter Property="CanUserReorderColumns"   Value="False"/>
+        <Setter Property="CanUserResizeRows"       Value="False"/>
+        <Setter Property="HeadersVisibility"       Value="Column"/>
+        <Setter Property="GridLinesVisibility"     Value="Horizontal"/>
+        <Setter Property="RowHeight"               Value="40"/>
+        <Setter Property="ColumnHeaderHeight"      Value="38"/>
+        <Setter Property="SelectionUnit"           Value="FullRow"/>
         <Setter Property="EnableRowVirtualization" Value="True"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
     </Style>
 
-    <!-- ===== DATAGRID COLUMN HEADER ===== -->
+    <!-- ===== DATAGRID COLUMN HEADER — Gradient teal with white text ===== -->
     <Style x:Key="ModernColumnHeaderStyle" TargetType="DataGridColumnHeader">
-        <Setter Property="Background"     Value="{StaticResource SurfaceAltBrush}"/>
-        <Setter Property="Foreground"     Value="{StaticResource TextSecondaryBrush}"/>
+        <Setter Property="Foreground"     Value="#FFFFFF"/>
         <Setter Property="FontFamily"     Value="Segoe UI"/>
-        <Setter Property="FontSize"       Value="12"/>
+        <Setter Property="FontSize"       Value="11"/>
         <Setter Property="FontWeight"     Value="SemiBold"/>
-        <Setter Property="Padding"        Value="16,0"/>
+        <Setter Property="Padding"        Value="14,0"/>
         <Setter Property="Height"         Value="38"/>
-        <Setter Property="BorderBrush"    Value="{StaticResource BorderLightBrush}"/>
-        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridColumnHeader">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
+                    <Border x:Name="headerBorder"
                             Padding="{TemplateBinding Padding}"
                             SnapsToDevicePixels="True">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#3A7A96" Offset="0"/>
+                                <GradientStop Color="#28627D" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
                         <ContentPresenter VerticalAlignment="Center"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="headerBorder" Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#4A8DAE" Offset="0"/>
+                                        <GradientStop Color="#3A7A96" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -61,15 +75,13 @@
     <!-- ===== DATAGRID ROW ===== -->
     <Style x:Key="ModernDataGridRowStyle" TargetType="DataGridRow">
         <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderLightBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#F1F5F9"/>
+                <Setter Property="Background" Value="{StaticResource RowHoverBrush}"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="#E2E8F0"/>
-                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Background" Value="{StaticResource RowSelectedBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -77,13 +89,14 @@
     <!-- ===== DATAGRID CELL ===== -->
     <Style x:Key="ModernDataGridCellStyle" TargetType="DataGridCell">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding"         Value="12,0"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding"         Value="14,0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridCell">
                     <Border Background="Transparent"
                             Padding="{TemplateBinding Padding}"
+                            BorderThickness="0"
                             SnapsToDevicePixels="True">
                         <ContentPresenter VerticalAlignment="Center"/>
                     </Border>
@@ -99,12 +112,12 @@
 
     <!-- ===== SCROLLBAR ===== -->
     <Style TargetType="ScrollBar">
-        <Setter Property="Width" Value="8"/>
+        <Setter Property="Width" Value="6"/>
         <Setter Property="Background" Value="Transparent"/>
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="Width" Value="Auto"/>
-                <Setter Property="Height" Value="8"/>
+                <Setter Property="Height" Value="6"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -113,7 +126,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border Background="#CBD5E0" CornerRadius="4" Margin="2"/>
+                    <Border Background="#96B8C8" CornerRadius="3" Margin="1"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

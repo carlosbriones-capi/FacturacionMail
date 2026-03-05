@@ -62,13 +62,55 @@ public partial class ConsultaFacturasViewModel : ObservableObject
     public ObservableCollection<Factura> Facturas { get; } = [];
     public ObservableCollection<DireccionEmail> Direcciones { get; } = [];
 
+    // ── Selección Global ──────────────────────────────────────────────
+
+    [ObservableProperty]
+    private bool _seleccionarTodasFacturas = false;
+
+    partial void OnSeleccionarTodasFacturasChanged(bool value)
+    {
+        if (_isUpdatingSelection) return;
+        _isUpdatingSelection = true;
+        foreach (var f in Facturas) f.Seleccionada = value;
+        _isUpdatingSelection = false;
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
+    [ObservableProperty]
+    private bool _seleccionarTodasDirecciones = false;
+
+    partial void OnSeleccionarTodasDireccionesChanged(bool value)
+    {
+        if (_isUpdatingSelection) return;
+        _isUpdatingSelection = true;
+        foreach (var d in Direcciones) d.Seleccionada = value;
+        _isUpdatingSelection = false;
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool _isUpdatingSelection = false;
+
+    private void CheckGlobalSelectionStates()
+    {
+        if (_isUpdatingSelection) return;
+        _isUpdatingSelection = true;
+
+        SeleccionarTodasFacturas = Facturas.Any() && Facturas.All(f => f.Seleccionada);
+        SeleccionarTodasDirecciones = Direcciones.Any() && Direcciones.All(d => d.Seleccionada);
+
+        _isUpdatingSelection = false;
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
     public ConsultaFacturasViewModel()
     {
         _facturaService = new MockDataService();
         _emailService = (IEmailService)_facturaService;
         
         // Listen to collection changes to update EnviarMailCommand state
-        Direcciones.CollectionChanged += (s, e) => EnviarMailCommand.NotifyCanExecuteChanged();
+        Direcciones.CollectionChanged += (s, e) => {
+            CheckGlobalSelectionStates();
+        };
     }
 
     // ── Comandos ──────────────────────────────────────────────────────
@@ -91,18 +133,26 @@ public partial class ConsultaFacturasViewModel : ObservableObject
             Facturas.Clear();
             foreach (var f in facturas) 
             {
-                // Subscribe to property changes to update EnviarMailCommand if selection changes
-                f.PropertyChanged += (s, e) => { if (e.PropertyName == nameof(Factura.Seleccionada)) EnviarMailCommand.NotifyCanExecuteChanged(); };
+                // Subscribe to property changes to update Global Checkbox & Command
+                f.PropertyChanged += (s, e) => { 
+                    if (e.PropertyName == nameof(Factura.Seleccionada)) 
+                        CheckGlobalSelectionStates(); 
+                };
                 Facturas.Add(f);
             }
 
             Direcciones.Clear();
             foreach (var d in dirs) 
             {
-                // Subscribe to property changes to update EnviarMailCommand if selection changes
-                d.PropertyChanged += (s, e) => { if (e.PropertyName == nameof(DireccionEmail.Seleccionada)) EnviarMailCommand.NotifyCanExecuteChanged(); };
+                // Subscribe to property changes to update Global Checkbox & Command
+                d.PropertyChanged += (s, e) => { 
+                    if (e.PropertyName == nameof(DireccionEmail.Seleccionada)) 
+                        CheckGlobalSelectionStates(); 
+                };
                 Direcciones.Add(d);
             }
+
+            CheckGlobalSelectionStates();
 
             ResultadosVisibles = true;
             MensajeEstado = $"{Facturas.Count} facturas encontradas · {Direcciones.Count} direcciones de envío";

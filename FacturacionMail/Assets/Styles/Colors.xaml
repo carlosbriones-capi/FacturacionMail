@@ -1,41 +1,53 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- ===== PALETA CORPORATIVA MODERNA ===== -->
+    <!-- ===== 4-COLOR DESIGN SYSTEM ===== -->
 
     <!-- Fondos -->
-    <Color x:Key="AppBackgroundColor">#F8FAFC</Color>
+    <Color x:Key="AppBackgroundColor">#F6F8FA</Color>
     <Color x:Key="SurfaceColor">#FFFFFF</Color>
-    <Color x:Key="SurfaceAltColor">#F1F5F9</Color>
-    <Color x:Key="BorderColor">#CBD5E1</Color>
-    <Color x:Key="BorderLightColor">#E2E8F0</Color>
+    <Color x:Key="SurfaceAltColor">#F0F4F7</Color>
+    <Color x:Key="BorderColor">#D0D9E2</Color>
+    <Color x:Key="BorderLightColor">#EEF2F7</Color>
 
-    <!-- Acento primario: azul moderno -->
-    <Color x:Key="PrimaryColor">#2563EB</Color>      <!-- Blue 600 -->
-    <Color x:Key="PrimaryDarkColor">#1D4ED8</Color>  <!-- Blue 700 -->
-    <Color x:Key="PrimaryLightColor">#60A5FA</Color> <!-- Blue 400 -->
-    <Color x:Key="PrimaryVeryLightColor">#EFF6FF</Color> <!-- Blue 50 -->
+    <!-- PRIMARY: Deep Teal — Chrome, headers, nav -->
+    <Color x:Key="PrimaryColor">#28627D</Color>
+    <Color x:Key="PrimaryDarkColor">#1B4E63</Color>
+    <Color x:Key="PrimaryLightColor">#3A7A96</Color>
+    <Color x:Key="PrimaryVeryLightColor">#E3F1F7</Color>
+
+    <!-- ACCENT: Sky Blue — Buttons, focus, hover -->
+    <Color x:Key="AccentColor">#4AABCF</Color>
+    <Color x:Key="AccentDarkColor">#2E8BB0</Color>
+    <Color x:Key="AccentLightColor">#7CC8E0</Color>
+    <Color x:Key="AccentVeryLightColor">#D7EFF7</Color>
+
+    <!-- ENERGY: Amber — Checkboxes, badges, send button -->
+    <Color x:Key="EnergyColor">#F59E0B</Color>
+    <Color x:Key="EnergyDarkColor">#D97706</Color>
+    <Color x:Key="EnergyLightColor">#FCD34D</Color>
 
     <!-- Texto -->
-    <Color x:Key="TextPrimaryColor">#0F172A</Color>   <!-- Slate 900 -->
-    <Color x:Key="TextSecondaryColor">#334155</Color> <!-- Slate 700 -->
-    <Color x:Key="TextMutedColor">#64748B</Color>     <!-- Slate 500 -->
+    <Color x:Key="TextPrimaryColor">#0F1F2E</Color>
+    <Color x:Key="TextSecondaryColor">#3A5068</Color>
+    <Color x:Key="TextMutedColor">#7A94A8</Color>
     <Color x:Key="TextOnPrimaryColor">#FFFFFF</Color>
+    <Color x:Key="TextOnPrimaryMutedColor">#B8D4DF</Color>
 
     <!-- Estados -->
     <Color x:Key="SuccessColor">#10B981</Color>
     <Color x:Key="WarningColor">#F59E0B</Color>
     <Color x:Key="DangerColor">#EF4444</Color>
-    <Color x:Key="InfoColor">#3B82F6</Color>
+    <Color x:Key="InfoColor">#4AABCF</Color>
 
     <!-- Filas de tabla -->
-    <Color x:Key="RowAltColor">#F8FAFC</Color>
-    <Color x:Key="RowHoverColor">#EFF6FF</Color>
-    <Color x:Key="RowSelectedColor">#DBEAFE</Color>
+    <Color x:Key="RowAltColor">#F9FAFB</Color>
+    <Color x:Key="RowHoverColor">#EBF6FB</Color>
+    <Color x:Key="RowSelectedColor">#D0EAF2</Color>
 
     <!-- Gradiente header -->
-    <Color x:Key="HeaderGradientStartColor">#1E40AF</Color>
-    <Color x:Key="HeaderGradientEndColor">#2563EB</Color>
+    <Color x:Key="HeaderGradientStartColor">#1B4E63</Color>
+    <Color x:Key="HeaderGradientEndColor">#28627D</Color>
 
     <!-- ===== BRUSHES ===== -->
 
@@ -50,10 +62,27 @@
     <SolidColorBrush x:Key="PrimaryLightBrush"     Color="{StaticResource PrimaryLightColor}"/>
     <SolidColorBrush x:Key="PrimaryVeryLightBrush" Color="{StaticResource PrimaryVeryLightColor}"/>
 
+    <SolidColorBrush x:Key="AccentBrush"           Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentDarkBrush"       Color="{StaticResource AccentDarkColor}"/>
+    <SolidColorBrush x:Key="AccentLightBrush"      Color="{StaticResource AccentLightColor}"/>
+    <SolidColorBrush x:Key="AccentVeryLightBrush"  Color="{StaticResource AccentVeryLightColor}"/>
+
+    <SolidColorBrush x:Key="EnergyBrush"           Color="{StaticResource EnergyColor}"/>
+    <SolidColorBrush x:Key="EnergyDarkBrush"       Color="{StaticResource EnergyDarkColor}"/>
+    <SolidColorBrush x:Key="EnergyLightBrush"      Color="{StaticResource EnergyLightColor}"/>
+
+    <!-- Keep SecondaryBrush aliases for backwards compat -->
+    <SolidColorBrush x:Key="SecondaryBrush"        Color="{StaticResource EnergyColor}"/>
+    <SolidColorBrush x:Key="SecondaryDarkBrush"    Color="{StaticResource EnergyDarkColor}"/>
+    <SolidColorBrush x:Key="SecondaryLightBrush"   Color="{StaticResource EnergyLightColor}"/>
+    <Color x:Key="SecondaryColor">#F59E0B</Color>
+    <Color x:Key="SecondaryDarkColor">#D97706</Color>
+
     <SolidColorBrush x:Key="TextPrimaryBrush"      Color="{StaticResource TextPrimaryColor}"/>
     <SolidColorBrush x:Key="TextSecondaryBrush"    Color="{StaticResource TextSecondaryColor}"/>
     <SolidColorBrush x:Key="TextMutedBrush"        Color="{StaticResource TextMutedColor}"/>
     <SolidColorBrush x:Key="TextOnPrimaryBrush"    Color="{StaticResource TextOnPrimaryColor}"/>
+    <SolidColorBrush x:Key="TextOnPrimaryMutedBrush" Color="{StaticResource TextOnPrimaryMutedColor}"/>
 
     <SolidColorBrush x:Key="SuccessBrush"          Color="{StaticResource SuccessColor}"/>
     <SolidColorBrush x:Key="DangerBrush"           Color="{StaticResource DangerColor}"/>

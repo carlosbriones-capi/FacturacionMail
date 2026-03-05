@@ -58,10 +58,6 @@
                 <Separator/>
                 <MenuItem Header="Limpiar criterios"/>
             </MenuItem>
-            <MenuItem Header="Ficheros Excel">
-                <MenuItem Header="Exportar facturas..."/>
-                <MenuItem Header="Exportar direcciones..."/>
-            </MenuItem>
             <MenuItem Header="Ver">
                 <MenuItem Header="Consulta de facturas" IsChecked="True"/>
                 <Separator/>
