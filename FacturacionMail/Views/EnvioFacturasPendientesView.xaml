@@ -167,16 +167,16 @@
             </StackPanel>
 
             <!-- Panel de resultados — dos columnas -->
-            <Grid Margin="24,0,24,20"
+            <Grid Margin="24,16,24,20"
                   Visibility="{Binding DetalleVisible, Converter={StaticResource BoolToVisibility}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.35*"/>
                     <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.65*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- ── Columna izquierda: Destinatarios ── -->
@@ -280,7 +280,7 @@
                                     <DataGridTemplateColumn.Header>
                                         <CheckBox HorizontalAlignment="Center" ToolTip="Seleccionar todos"
                                                   IsChecked="{Binding DataContext.SeleccionarTodasDirecciones,
-                                                      RelativeSource={RelativeSource AncestorType={x:Type views:EnvioFacturasPendientesView}}}"/>
+                                                      RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -307,7 +307,6 @@
                         <TextBox Grid.Row="9"
                                  Style="{StaticResource ModernTextAreaStyle}"
                                  Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="100"
                                  Margin="0,0,0,16"/>
 
                         <Button Grid.Row="10"
@@ -400,7 +399,7 @@
                                     <DataGridTemplateColumn.Header>
                                         <CheckBox HorizontalAlignment="Center" ToolTip="Seleccionar todas"
                                                   IsChecked="{Binding DataContext.SeleccionarTodasFacturas,
-                                                          RelativeSource={RelativeSource AncestorType={x:Type views:EnvioFacturasPendientesView}}}"/>
+                                                          RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

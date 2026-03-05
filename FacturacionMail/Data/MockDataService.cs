@@ -227,4 +227,17 @@ public class MockDataService : IFacturaService, IEmailService
         // Simulación: siempre éxito
         return Task.FromResult(true);
     }
+
+    public Task<IEnumerable<EstadoEnvioMail>> ObtenerEstadoEnviosAsync()
+    {
+        var estados = new List<EstadoEnvioMail>
+        {
+            new() { Orden = 1, Fecha = DateTime.Now, HoraIni = "09:00", HoraFin = "09:05", Cliente = "CM Capital Markets", Tipo = "Factura", Asunto = "Facturas Feb-2026", Adjuntos = 5, Envios = 2, Estado = "Enviado" },
+            new() { Orden = 2, Fecha = DateTime.Now, HoraIni = "09:10", HoraFin = "09:12", Cliente = "Inversiones Globales SA", Tipo = "Factura", Asunto = "Facturas Feb-2026", Adjuntos = 3, Envios = 1, Estado = "Error" },
+            new() { Orden = 3, Fecha = DateTime.Now, HoraIni = "09:15", HoraFin = "09:20", Cliente = "Fondos Mediterráneo SL", Tipo = "Factura", Asunto = "Factura 12345", Adjuntos = 1, Envios = 1, Estado = "Enviado" },
+            new() { Orden = 4, Fecha = DateTime.Now.AddDays(-1), HoraIni = "16:00", HoraFin = "16:10", Cliente = "Capital Invest Group", Tipo = "Factura", Asunto = "Resumen Mensual", Adjuntos = 12, Envios = 4, Estado = "Enviado" },
+            new() { Orden = 5, Fecha = DateTime.Now.AddDays(-2), HoraIni = "10:30", HoraFin = "10:35", Cliente = "Asset Management Pro", Tipo = "Listado", Asunto = "Listado de Operaciones", Adjuntos = 2, Envios = 1, Estado = "Enviado" }
+        };
+        return Task.FromResult<IEnumerable<EstadoEnvioMail>>(estados);
+    }
 }

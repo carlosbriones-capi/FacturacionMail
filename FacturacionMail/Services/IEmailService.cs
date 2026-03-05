@@ -35,4 +35,9 @@ public interface IEmailService
         string cuerpo,
         IEnumerable<DireccionEmail> destinatarios,
         IEnumerable<Factura> facturas);
+
+    /// <summary>
+    /// Obtiene el estado de los envíos de mail.
+    /// </summary>
+    Task<IEnumerable<EstadoEnvioMail>> ObtenerEstadoEnviosAsync();
 }

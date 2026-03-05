@@ -240,7 +240,7 @@
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Width="55" CanUserSort="False">
                                 <DataGridTemplateColumn.Header>
-                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasDirecciones, RelativeSource={RelativeSource AncestorType={x:Type views:ConsultaFacturasView}}}"
+                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasDirecciones, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                               HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
                                 </DataGridTemplateColumn.Header>
                                 <DataGridTemplateColumn.CellTemplate>
@@ -344,7 +344,7 @@
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Width="75" CanUserSort="False">
                                 <DataGridTemplateColumn.Header>
-                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasFacturas, RelativeSource={RelativeSource AncestorType={x:Type views:ConsultaFacturasView}}}"
+                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasFacturas, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                               HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
                                 </DataGridTemplateColumn.Header>
                                 <DataGridTemplateColumn.CellTemplate>
