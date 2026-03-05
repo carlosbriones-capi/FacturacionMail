@@ -58,12 +58,9 @@
                 <Separator/>
                 <MenuItem Header="Limpiar criterios"/>
             </MenuItem>
-            <MenuItem Header="Ficheros Excel">
-                <MenuItem Header="Exportar facturas..."/>
-                <MenuItem Header="Exportar direcciones..."/>
-            </MenuItem>
             <MenuItem Header="Ver">
-                <MenuItem Header="Consulta de facturas" IsChecked="True"/>
+                <MenuItem Header="Consulta de facturas" Click="OnConsultaFacturasClick" IsChecked="True"/>
+                <MenuItem Header="Envío Facturación Mail" Click="OnEnvioMailClick"/>
                 <Separator/>
                 <MenuItem Header="Clientes excluidos"/>
             </MenuItem>
@@ -90,7 +87,9 @@
         <!-- ── Contenido principal ── -->
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
-            <views:ConsultaFacturasView Margin="4"/>
+            <ContentControl x:Name="MainContent">
+                <views:ConsultaFacturasView/>
+            </ContentControl>
         </ScrollViewer>
     </DockPanel>
 </Window>
