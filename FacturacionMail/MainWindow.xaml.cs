@@ -20,6 +20,11 @@ public partial class MainWindow : Window
         MainContent.Content = new FacturacionMailView();
     }
 
+    private void OnFacturasPendientesClick(object sender, RoutedEventArgs e)
+    {
+        MainContent.Content = new EnvioFacturasPendientesView();
+    }
+
     protected override void OnClosed(EventArgs e)
     {
         base.OnClosed(e);

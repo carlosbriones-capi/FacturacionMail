@@ -128,10 +128,17 @@
 
                     <StackPanel>
                         <TextBlock Text="TIPO" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
-                        <StackPanel Margin="0,2,0,0">
-                            <RadioButton Content="Actuales" Style="{StaticResource ModernRadioStyle}" IsChecked="{Binding SoloActuales}" Margin="0,0,0,6"/>
-                            <RadioButton Content="Todas" Style="{StaticResource ModernRadioStyle}" IsChecked="{Binding SoloActuales, Converter={StaticResource InvertBool}}"/>
-                        </StackPanel>
+                        <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="10" Padding="3">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="Actuales" 
+                                             Style="{StaticResource ModernPillRadioStyle}" 
+                                             IsChecked="{Binding SoloActuales}" 
+                                             Margin="0,0,2,0"/>
+                                <RadioButton Content="Todas" 
+                                             Style="{StaticResource ModernPillRadioStyle}" 
+                                             IsChecked="{Binding SoloActuales, Converter={StaticResource InvertBool}}"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </StackPanel>
 
@@ -212,47 +219,42 @@
                                 ToolTip="Añadir a la lista"/>
                     </Grid>
 
-                    <Border Grid.Row="3" 
-                            BorderBrush="{StaticResource BorderLightBrush}" 
-                            BorderThickness="1" 
-                            CornerRadius="8" 
-                            ClipToBounds="True"
-                            Margin="0,0,0,16">
-                        <DataGrid ItemsSource="{Binding Direcciones}"
-                                  Style="{StaticResource ModernDataGridStyle}"
-                                  ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
-                                  RowStyle="{StaticResource ModernDataGridRowStyle}"
-                                  BorderThickness="0"
-                                  RowHeight="35"
-                                  ColumnHeaderHeight="37"
-                                  Height="317"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                  GridLinesVisibility="None">
-                            <DataGrid.CellStyle>
-                                <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                </Style>
-                            </DataGrid.CellStyle>
-                            <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="46" CanUserSort="False">
-                                    <DataGridTemplateColumn.Header>
-                                        <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasDirecciones, RelativeSource={RelativeSource AncestorType={x:Type views:ConsultaFacturasView}}}"
-                                                  HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
-                                    </DataGridTemplateColumn.Header>
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="E-mail" Binding="{Binding Email}" Width="*"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding Direcciones}"
+                              Style="{StaticResource ModernDataGridStyle}"
+                              ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
+                              RowStyle="{StaticResource ModernDataGridRowStyle}"
+                              BorderThickness="1"
+                              BorderBrush="{StaticResource BorderLightBrush}"
+                              RowHeight="35"
+                              ColumnHeaderHeight="37"
+                              Height="317"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              GridLinesVisibility="None"
+                              Margin="0,0,0,16">
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="55" CanUserSort="False">
+                                <DataGridTemplateColumn.Header>
+                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasDirecciones, RelativeSource={RelativeSource AncestorType={x:Type views:ConsultaFacturasView}}}"
+                                              HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
+                                </DataGridTemplateColumn.Header>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="E-mail" Binding="{Binding Email}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
-                    <TextBlock Grid.Row="4" Text="ASUNTO" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
+                    <TextBlock Grid.Row="4" Text="Asunto" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                     <TextBox Grid.Row="5"
                              Style="{StaticResource ModernTextBoxStyle}"
                              Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
@@ -260,7 +262,7 @@
                              Background="{StaticResource SurfaceAltBrush}"
                              Margin="0,0,0,16"/>
 
-                    <TextBlock Grid.Row="6" Text="MENSAJE" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
+                    <TextBlock Grid.Row="6" Text="Mensaje" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                     <TextBox Grid.Row="7"
                              Style="{StaticResource ModernTextAreaStyle}"
                              Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
@@ -324,43 +326,38 @@
                         </Border>
                     </Grid>
 
-                    <!-- DataGrid con bordes redondeados -->
-                    <Border BorderBrush="{StaticResource BorderLightBrush}" 
-                            BorderThickness="1" 
-                            CornerRadius="8" 
-                            ClipToBounds="True">
-                        <DataGrid ItemsSource="{Binding Facturas}"
-                                  Style="{StaticResource ModernDataGridStyle}"
-                                  ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
-                                  RowStyle="{StaticResource ModernDataGridRowStyle}"
-                                  BorderThickness="0"
-                                  GridLinesVisibility="None"
-                                  RowHeight="36"
-                                  ColumnHeaderHeight="38">
-                            <DataGrid.CellStyle>
-                                <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                </Style>
-                            </DataGrid.CellStyle>
-                            <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="75" CanUserSort="False">
-                                    <DataGridTemplateColumn.Header>
-                                        <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasFacturas, RelativeSource={RelativeSource AncestorType={x:Type views:ConsultaFacturasView}}}"
-                                                  HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
-                                    </DataGridTemplateColumn.Header>
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Archivo" Binding="{Binding NombreArchivo}" Width="*"/>
-                                <DataGridTextColumn Header="Cliente" Binding="{Binding NombreCliente}" Width="*"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
+                    <DataGrid ItemsSource="{Binding Facturas}"
+                              Style="{StaticResource ModernDataGridStyle}"
+                              ColumnHeaderStyle="{StaticResource ModernColumnHeaderStyle}"
+                              RowStyle="{StaticResource ModernDataGridRowStyle}"
+                              BorderThickness="1"
+                              BorderBrush="{StaticResource BorderLightBrush}"
+                              GridLinesVisibility="None"
+                              RowHeight="36"
+                              ColumnHeaderHeight="38">
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="75" CanUserSort="False">
+                                <DataGridTemplateColumn.Header>
+                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasFacturas, RelativeSource={RelativeSource AncestorType={x:Type views:ConsultaFacturasView}}}"
+                                              HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
+                                </DataGridTemplateColumn.Header>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Seleccionada, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Archivo" Binding="{Binding NombreArchivo}" Width="*"/>
+                            <DataGridTextColumn Header="Cliente" Binding="{Binding NombreCliente}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </DockPanel>
             </ContentControl>
         </Grid>

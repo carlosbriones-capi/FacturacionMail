@@ -104,24 +104,50 @@ public class MockDataService : IFacturaService, IEmailService
         new() { Codigo = 265, Nombre = "Software & Co.",           Nif = "A28667788" },
     ];
 
+    private static readonly List<ListaEmail> _listas =
+    [
+        // CM Capital Markets (182)
+        new() { Id = 1, CodigoCliente = 182, Nombre = "Lista Principal" },
+        new() { Id = 2, CodigoCliente = 182, Nombre = "Dirección y Contabilidad" },
+        // Inversiones Globales (200)
+        new() { Id = 3, CodigoCliente = 200, Nombre = "Facturación" },
+        // Tech Nova Solutions (251)
+        new() { Id = 4, CodigoCliente = 251, Nombre = "Contactos Generales" },
+        // Iberia Renovables (254)
+        new() { Id = 5, CodigoCliente = 254, Nombre = "Gerencia y Pagos" },
+        // Software & Co. (265)
+        new() { Id = 6, CodigoCliente = 265, Nombre = "Equipo Técnico" },
+        new() { Id = 7, CodigoCliente = 265, Nombre = "Contabilidad" },
+    ];
+
     private static readonly List<DireccionEmail> _direcciones =
     [
-        new() { Id = 1, CodigoCliente = 182, Email = "facturas@cmcapitalmarkets.es",    Nombre = "Dpto. Facturación" },
-        new() { Id = 2, CodigoCliente = 182, Email = "contabilidad@cmcapitalmarkets.es", Nombre = "Contabilidad"      },
-        new() { Id = 3, CodigoCliente = 182, Email = "direccion@cmcapitalmarkets.es",    Nombre = "Dirección General" },
-        new() { Id = 4, CodigoCliente = 200, Email = "facturacion@inversionesglobales.es", Nombre = "Facturación"    },
-        new() { Id = 5, CodigoCliente = 200, Email = "admin@inversionesglobales.es",    Nombre = "Administración"   },
-        new() { Id = 6,  CodigoCliente = 251, Email = "soporte@technova.com",      Nombre = "Soporte Técnico" },
-        new() { Id = 7,  CodigoCliente = 251, Email = "admin@technova.com",        Nombre = "Administración" },
-        new() { Id = 8,  CodigoCliente = 252, Email = "info@estrategica.es",       Nombre = "Información General" },
-        new() { Id = 9,  CodigoCliente = 253, Email = "logistica@delsur.es",       Nombre = "Dpto. Logística" },
-        new() { Id = 10, CodigoCliente = 254, Email = "pagos@iberiarenovables.es",  Nombre = "Cuentas a Pagar" },
-        new() { Id = 11, CodigoCliente = 254, Email = "gerencia@iberiarenovables.es", Nombre = "Gerencia" },
-        new() { Id = 12, CodigoCliente = 255, Email = "pedidos@distalimentarias.com", Nombre = "Pedidos" },
-        new() { Id = 13, CodigoCliente = 258, Email = "billing@digitalagency.io",   Nombre = "Billing Dept" },
-        new() { Id = 14, CodigoCliente = 260, Email = "central@seguridadglobal.com", Nombre = "Centralita" },
-        new() { Id = 15, CodigoCliente = 265, Email = "dev@softwareandco.com",      Nombre = "Desarrollo" },
-        new() { Id = 16, CodigoCliente = 265, Email = "contas@softwareandco.com",   Nombre = "Contabilidad" }
+        // Lista 1 — CM Capital Markets: Lista Principal
+        new() { Id = 1, CodigoCliente = 182, Email = "facturas@cmcapitalmarkets.es",     Nombre = "Dpto. Facturación",  ListaId = 1 },
+        new() { Id = 2, CodigoCliente = 182, Email = "contabilidad@cmcapitalmarkets.es", Nombre = "Contabilidad",       ListaId = 1 },
+        // Lista 2 — CM Capital Markets: Dirección y Contabilidad
+        new() { Id = 3, CodigoCliente = 182, Email = "direccion@cmcapitalmarkets.es",    Nombre = "Dirección General",  ListaId = 2 },
+        new() { Id = 4, CodigoCliente = 182, Email = "contabilidad@cmcapitalmarkets.es", Nombre = "Contabilidad",       ListaId = 2 },
+        // Lista 3 — Inversiones Globales: Facturación
+        new() { Id = 5, CodigoCliente = 200, Email = "facturacion@inversionesglobales.es", Nombre = "Facturación",     ListaId = 3 },
+        new() { Id = 6, CodigoCliente = 200, Email = "admin@inversionesglobales.es",     Nombre = "Administración",    ListaId = 3 },
+        // Lista 4 — Tech Nova Solutions: Contactos Generales
+        new() { Id = 7,  CodigoCliente = 251, Email = "soporte@technova.com",  Nombre = "Soporte Técnico",    ListaId = 4 },
+        new() { Id = 8,  CodigoCliente = 251, Email = "admin@technova.com",    Nombre = "Administración",     ListaId = 4 },
+        // Lista 5 — Iberia Renovables: Gerencia y Pagos
+        new() { Id = 9,  CodigoCliente = 254, Email = "pagos@iberiarenovables.es",    Nombre = "Cuentas a Pagar", ListaId = 5 },
+        new() { Id = 10, CodigoCliente = 254, Email = "gerencia@iberiarenovables.es", Nombre = "Gerencia",        ListaId = 5 },
+        // Lista 6 — Software & Co.: Equipo Técnico
+        new() { Id = 11, CodigoCliente = 265, Email = "dev@softwareandco.com",    Nombre = "Desarrollo",      ListaId = 6 },
+        new() { Id = 12, CodigoCliente = 265, Email = "qa@softwareandco.com",     Nombre = "QA / Testing",    ListaId = 6 },
+        // Lista 7 — Software & Co.: Contabilidad
+        new() { Id = 13, CodigoCliente = 265, Email = "contas@softwareandco.com", Nombre = "Contabilidad",    ListaId = 7 },
+        // Otros (sin lista — usados por ConsultaFacturasView)
+        new() { Id = 14, CodigoCliente = 252, Email = "info@estrategica.es",         Nombre = "Información General" },
+        new() { Id = 15, CodigoCliente = 253, Email = "logistica@delsur.es",         Nombre = "Dpto. Logística" },
+        new() { Id = 16, CodigoCliente = 255, Email = "pedidos@distalimentarias.com", Nombre = "Pedidos" },
+        new() { Id = 17, CodigoCliente = 258, Email = "billing@digitalagency.io",    Nombre = "Billing Dept" },
+        new() { Id = 18, CodigoCliente = 260, Email = "central@seguridadglobal.com", Nombre = "Centralita" },
     ];
 
     private static List<Factura> GenerarFacturas(string mesAnio, int clienteDesde, int clienteHasta,
@@ -178,6 +204,20 @@ public class MockDataService : IFacturaService, IEmailService
 
         if (!dirs.Any()) dirs = _direcciones.Take(3).ToList();
 
+        return Task.FromResult<IEnumerable<DireccionEmail>>(dirs);
+    }
+
+    public Task<IEnumerable<ListaEmail>> ObtenerListasAsync(int codigoCliente)
+    {
+        var listas = codigoCliente == 0
+            ? _listas
+            : _listas.Where(l => l.CodigoCliente == codigoCliente).ToList();
+        return Task.FromResult<IEnumerable<ListaEmail>>(listas);
+    }
+
+    public Task<IEnumerable<DireccionEmail>> ObtenerDireccionesPorListaAsync(int listaId)
+    {
+        var dirs = _direcciones.Where(d => d.ListaId == listaId).ToList();
         return Task.FromResult<IEnumerable<DireccionEmail>>(dirs);
     }
 

@@ -18,45 +18,6 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <!-- Estilo para los botones de "píldora" (Segment Control) -->
-        <Style x:Key="ModernPillRadioStyle" TargetType="RadioButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-            <Setter Property="Padding" Value="16,6"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="border"
-                                CornerRadius="8"
-                                Background="{TemplateBinding Background}"
-                                BorderThickness="0"
-                                Padding="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="True">
-                            <ContentPresenter x:Name="content"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsMouseOver" Value="True"/>
-                                    <Condition Property="IsChecked" Value="False"/>
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource SurfaceBrush}"/>
-                                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
-                            </MultiTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -166,14 +127,6 @@
                             ToolTip="Inicializar criterios"
                             Visibility="{Binding IsDetailedMode, Converter={StaticResource BoolToVisibility}}">
                         <TextBlock Text="↺" FontSize="15" Margin="0" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Style="{StaticResource AccentButtonStyle}"
-                            Command="{Binding EnviarMailCommand}"
-                            Padding="18,10">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="▶" FontSize="11" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="PROCESAR" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -308,6 +261,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
@@ -322,7 +276,29 @@
                         <TextBox Grid.Row="1" Style="{StaticResource DynamicBodyTextBoxStyle}"
                                  AcceptsReturn="True" TextWrapping="Wrap"
                                  VerticalScrollBarVisibility="Auto"
-                                 Background="{StaticResource SurfaceAltBrush}"/>
+                                 Background="{StaticResource SurfaceAltBrush}"
+                                 Margin="0,0,0,20"/>
+
+                        <Button Grid.Row="2"
+                                Command="{Binding EnviarMailCommand}"
+                                Style="{StaticResource AccentButtonStyle}"
+                                Padding="32,10" HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="✉" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock FontWeight="SemiBold" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Enviar Correo"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Ocupado}" Value="True">
+                                                    <Setter Property="Text" Value="Enviando..."/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </ContentControl>
             </Grid>

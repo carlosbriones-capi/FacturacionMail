@@ -67,6 +67,7 @@
             <MenuItem Header="Ver" Style="{StaticResource ModernMenuItemStyle}">
                 <MenuItem Header="Consulta de facturas" Click="OnConsultaFacturasClick" Style="{StaticResource ModernMenuItemStyle}" IsChecked="True"/>
                 <MenuItem Header="Envío Facturación Mail" Click="OnEnvioMailClick" Style="{StaticResource ModernMenuItemStyle}"/>
+                <MenuItem Header="Facturas Pendientes" Click="OnFacturasPendientesClick" Style="{StaticResource ModernMenuItemStyle}"/>
                 <Separator Style="{StaticResource ModernSeparatorStyle}"/>
                 <MenuItem Header="Clientes excluidos" Style="{StaticResource ModernMenuItemStyle}"/>
             </MenuItem>

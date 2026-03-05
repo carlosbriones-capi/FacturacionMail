@@ -15,4 +15,6 @@ public partial class DireccionEmail : ObservableObject
     public string Email { get; set; } = string.Empty;
     public string Nombre { get; set; } = string.Empty;
     public int CodigoCliente { get; set; }
+    public int? ListaId { get; set; }
+
 }
