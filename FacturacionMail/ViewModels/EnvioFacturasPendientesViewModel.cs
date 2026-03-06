@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Data;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace FacturacionMail.ViewModels;
 
@@ -15,6 +17,7 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     // ── Colecciones ───────────────────────────────────────────────────
 
     public ObservableCollection<Cliente>       Clientes   { get; } = [];
+    public ICollectionView                    ClientesView { get; }
     public ObservableCollection<ListaEmail>    Listas     { get; } = [];
     public ObservableCollection<DireccionEmail> Direcciones { get; } = [];
     public ObservableCollection<Factura>       Facturas   { get; } = [];
@@ -44,12 +47,20 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     private string _mensajeEstado = string.Empty;
 
     [ObservableProperty]
-    private bool _seleccionarTodasDirecciones = false;
+    private bool _seleccionarTodasDirecciones = true;
 
     [ObservableProperty]
-    private bool _seleccionarTodasFacturas = false;
+    private bool _seleccionarTodasFacturas = true;
+
+    [ObservableProperty]
+    private string _filtroTexto = string.Empty;
 
     private bool _isUpdatingSelection = false;
+
+    partial void OnFiltroTextoChanged(string value)
+    {
+        ClientesView.Refresh();
+    }
 
     partial void OnSeleccionarTodasDireccionesChanged(bool value)
     {
@@ -89,6 +100,19 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     {
         _facturaService = new MockDataService();
         _emailService   = (IEmailService)_facturaService;
+
+        // Configurar la vista filtrada
+        ClientesView = CollectionViewSource.GetDefaultView(Clientes);
+        ClientesView.Filter = (obj) =>
+        {
+            if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
+            if (obj is not Cliente c) return false;
+
+            // Filtrar por código (comienzo del string) o nombre (contiene)
+            string search = FiltroTexto.ToLower();
+            return c.Codigo.ToString().Contains(search) || 
+                   c.Nombre.ToLower().Contains(search);
+        };
 
         _ = CargarClientesAsync();
     }

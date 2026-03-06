@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:FacturacionMail.ViewModels"
              xmlns:views="clr-namespace:FacturacionMail.Views"
+             xmlns:local="clr-namespace:FacturacionMail"
              mc:Ignorable="d"
              d:DesignHeight="750" d:DesignWidth="1150"
              Background="{StaticResource AppBackgroundBrush}"
@@ -13,6 +14,10 @@
              TextOptions.TextRenderingMode="ClearType"
              UseLayoutRounding="True"
              SnapsToDevicePixels="True">
+
+    <UserControl.Resources>
+        <local:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -148,11 +153,6 @@
                             Padding="12,6" Margin="0,0,8,0" ToolTip="Limpiar">
                         <TextBlock Text="↺" FontSize="15" Margin="0" VerticalAlignment="Center"/>
                     </Button>
-                    <Button Style="{StaticResource DangerButtonStyle}"
-                            Click="OnSalirClick"
-                            Padding="12,6" Margin="0,0,12,0" ToolTip="Salir">
-                        <TextBlock Text="✕" FontSize="12" Margin="0" VerticalAlignment="Center"/>
-                    </Button>
                     <Button Style="{StaticResource AccentButtonStyle}"
                             Command="{Binding ProcesarSeleccionCommand}"
                             Padding="16,8">
@@ -165,7 +165,7 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row="2" Margin="24,16,24,20"
+        <Grid Grid.Row="2" Margin="24,4,24,20"
               Visibility="{Binding ResultadosVisibles, Converter={StaticResource BoolToVisibility}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.4*"/>
@@ -173,7 +173,7 @@
                 <ColumnDefinition Width="1.6*"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
+            <ContentControl Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -227,7 +227,7 @@
                               BorderBrush="{StaticResource BorderLightBrush}"
                               RowHeight="35"
                               ColumnHeaderHeight="37"
-                              Height="317"
+                              Height="220"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               GridLinesVisibility="None"
                               Margin="0,0,0,16">
@@ -238,9 +238,9 @@
                             </Style>
                         </DataGrid.CellStyle>
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="55" CanUserSort="False">
+                            <DataGridTemplateColumn Width="55" CanUserSort="False" HeaderStyle="{StaticResource ModernCheckBoxColumnHeaderStyle}">
                                 <DataGridTemplateColumn.Header>
-                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasDirecciones, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    <CheckBox IsChecked="{Binding Data.SeleccionarTodasDirecciones, Source={StaticResource Proxy}}"
                                               HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
                                 </DataGridTemplateColumn.Header>
                                 <DataGridTemplateColumn.CellTemplate>
@@ -299,7 +299,7 @@
                 </Grid>
             </ContentControl>
 
-            <ContentControl Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20">
+            <ContentControl Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
                 <DockPanel>
                     <!-- Cabecera de la lista (Matching modern style) -->
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
@@ -334,6 +334,8 @@
                               BorderBrush="{StaticResource BorderLightBrush}"
                               GridLinesVisibility="None"
                               RowHeight="36"
+                              MaxHeight="550"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                               ColumnHeaderHeight="38">
                         <DataGrid.CellStyle>
                             <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
@@ -342,9 +344,9 @@
                             </Style>
                         </DataGrid.CellStyle>
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="75" CanUserSort="False">
+                            <DataGridTemplateColumn Width="75" CanUserSort="False" HeaderStyle="{StaticResource ModernCheckBoxColumnHeaderStyle}">
                                 <DataGridTemplateColumn.Header>
-                                    <CheckBox IsChecked="{Binding DataContext.SeleccionarTodasFacturas, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    <CheckBox IsChecked="{Binding Data.SeleccionarTodasFacturas, Source={StaticResource Proxy}}"
                                               HorizontalAlignment="Center" ToolTip="Seleccionar todas" />
                                 </DataGridTemplateColumn.Header>
                                 <DataGridTemplateColumn.CellTemplate>

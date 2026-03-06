@@ -160,7 +160,7 @@ public class MockDataService : IFacturaService, IEmailService
 
         var rand = new Random(42);
         int idx = facturaDesde > 0 ? facturaDesde : baseId;
-        int hasta = facturaHasta > 0 ? facturaHasta : idx + 14;
+        int hasta = facturaHasta > 0 ? facturaHasta : idx + 34;
 
         for (int i = idx; i <= hasta; i++)
         {

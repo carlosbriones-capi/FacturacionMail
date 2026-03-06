@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:FacturacionMail.ViewModels"
              xmlns:views="clr-namespace:FacturacionMail.Views"
+             xmlns:local="clr-namespace:FacturacionMail"
              mc:Ignorable="d"
              d:DesignHeight="750" d:DesignWidth="1150"
              Background="{StaticResource AppBackgroundBrush}"
@@ -13,6 +14,10 @@
              TextOptions.TextRenderingMode="ClearType"
              UseLayoutRounding="True"
              SnapsToDevicePixels="True">
+
+    <UserControl.Resources>
+        <local:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+    </UserControl.Resources>
 
     <UserControl.DataContext>
         <vm:EnvioFacturasPendientesViewModel/>
@@ -72,8 +77,11 @@
                     <ComboBox Style="{StaticResource ModernComboBoxStyle}"
                               Width="240"
                               IsEditable="True"
+                              StaysOpenOnEdit="True"
+                              IsTextSearchEnabled="False"
                               TextSearch.TextPath="Codigo"
-                              ItemsSource="{Binding Clientes}"
+                              Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding ClientesView}"
                               SelectedItem="{Binding ClienteSeleccionado, Mode=TwoWay}"
                               IsEnabled="{Binding Ocupado, Converter={StaticResource InvertBool}}">
                         <ComboBox.ItemTemplate>
@@ -167,7 +175,7 @@
             </StackPanel>
 
             <!-- Panel de resultados — dos columnas -->
-            <Grid Margin="24,16,24,20"
+            <Grid Margin="24,4,24,20"
                   Visibility="{Binding DetalleVisible, Converter={StaticResource BoolToVisibility}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -180,7 +188,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- ── Columna izquierda: Destinatarios ── -->
-<ContentControl Grid.Row="0" Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
+                <ContentControl Grid.Row="0" Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -276,11 +284,10 @@
                                 </Style>
                             </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="55" CanUserSort="False">
+                                <DataGridTemplateColumn Width="55" CanUserSort="False" HeaderStyle="{StaticResource ModernCheckBoxColumnHeaderStyle}">
                                     <DataGridTemplateColumn.Header>
                                         <CheckBox HorizontalAlignment="Center" ToolTip="Seleccionar todos"
-                                                  IsChecked="{Binding DataContext.SeleccionarTodasDirecciones,
-                                                      RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                  IsChecked="{Binding Data.SeleccionarTodasDirecciones, Source={StaticResource Proxy}}"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -333,7 +340,7 @@
                 </ContentControl>
 
                 <!-- ── Columna derecha: Facturas pendientes ── -->
-                <ContentControl Grid.Row="0" Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20">
+                <ContentControl Grid.Row="0" Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
                     <DockPanel>
                         <!-- Header facturas -->
                         <Grid DockPanel.Dock="Top" Margin="0,0,0,14">
@@ -387,6 +394,7 @@
                                   RowHeight="36"
                                   ColumnHeaderHeight="38"
                                   GridLinesVisibility="None"
+                                  MaxHeight="550"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <DataGrid.CellStyle>
                                 <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
@@ -395,11 +403,10 @@
                                 </Style>
                             </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="55" CanUserSort="False">
+                                <DataGridTemplateColumn Width="55" CanUserSort="False" HeaderStyle="{StaticResource ModernCheckBoxColumnHeaderStyle}">
                                     <DataGridTemplateColumn.Header>
                                         <CheckBox HorizontalAlignment="Center" ToolTip="Seleccionar todas"
-                                                  IsChecked="{Binding DataContext.SeleccionarTodasFacturas,
-                                                          RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                  IsChecked="{Binding Data.SeleccionarTodasFacturas, Source={StaticResource Proxy}}"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

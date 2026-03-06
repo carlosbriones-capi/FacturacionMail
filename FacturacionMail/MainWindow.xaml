@@ -50,37 +50,37 @@
               BorderBrush="{StaticResource BorderLightBrush}"
               BorderThickness="0,0,0,1">
             
-            <MenuItem Click="OnConsultaFacturasClick" Style="{StaticResource ModernMenuItemStyle}">
+            <MenuItem x:Name="MenuConsulta" Click="OnConsultaFacturasClick" Style="{StaticResource ModernMenuItemStyle}" IsCheckable="True" IsChecked="True">
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🔍" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🔍" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Consulta Facturas" VerticalAlignment="Center"/>
                     </StackPanel>
                 </MenuItem.Header>
             </MenuItem>
 
-            <MenuItem Click="OnEnvioMailClick" Style="{StaticResource ModernMenuItemStyle}">
+            <MenuItem x:Name="MenuEnvio" Click="OnEnvioMailClick" Style="{StaticResource ModernMenuItemStyle}" IsCheckable="True">
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="✉" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="✉" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Envío Facturación" VerticalAlignment="Center"/>
                     </StackPanel>
                 </MenuItem.Header>
             </MenuItem>
 
-            <MenuItem Click="OnFacturasPendientesClick" Style="{StaticResource ModernMenuItemStyle}">
+            <MenuItem x:Name="MenuPendientes" Click="OnFacturasPendientesClick" Style="{StaticResource ModernMenuItemStyle}" IsCheckable="True">
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📨" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="📨" FontSize="16" FontFamily="Segoe UI Emoji" Margin="0,-4,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Factur. Pendientes" VerticalAlignment="Center"/>
                     </StackPanel>
                 </MenuItem.Header>
             </MenuItem>
 
-            <MenuItem Click="OnEstadoEnviosClick" Style="{StaticResource ModernMenuItemStyle}">
+            <MenuItem x:Name="MenuEstado" Click="OnEstadoEnviosClick" Style="{StaticResource ModernMenuItemStyle}" IsCheckable="True">
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📊" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="📊" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Estado Envíos" VerticalAlignment="Center"/>
                     </StackPanel>
                 </MenuItem.Header>

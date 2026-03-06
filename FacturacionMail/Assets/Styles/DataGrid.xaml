@@ -39,8 +39,8 @@
                             <VisualBrush>
                                 <VisualBrush.Visual>
                                     <Border CornerRadius="12" Background="Black" 
-                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
-                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}"/>
+                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"/>
                                 </VisualBrush.Visual>
                             </VisualBrush>
                         </Grid.OpacityMask>
@@ -185,6 +185,11 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="ModernCheckBoxColumnHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource ModernColumnHeaderStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
     </Style>
 
     <!-- ===== DATAGRID ROW ===== -->

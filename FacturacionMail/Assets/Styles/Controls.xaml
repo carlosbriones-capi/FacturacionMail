@@ -69,7 +69,9 @@
                             <Point X="0.5" Y="0.5" />
                         </Border.RenderTransformOrigin>
 
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                          Margin="{TemplateBinding Padding}"
+                                          TextOptions.TextFormattingMode="Display"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -130,7 +132,9 @@
                             <Point X="0.5" Y="0.5" />
                         </Border.RenderTransformOrigin>
 
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                          Margin="{TemplateBinding Padding}"
+                                          TextOptions.TextFormattingMode="Display"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -150,17 +154,26 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="8"
-                            SnapsToDevicePixels="True">
-                        <Border.Effect>
-                            <DropShadowEffect Color="{StaticResource PrimaryColor}" BlurRadius="8" ShadowDepth="2" Opacity="0.3"/>
-                        </Border.Effect>
-                        <ContentPresenter HorizontalAlignment="Center" 
-                                          VerticalAlignment="Center"
-                                          Margin="{TemplateBinding Padding}"/>
-                    </Border>
+                    <Grid>
+                        <!-- Capa de sombra independiente (para no emborronar el texto) -->
+                        <Border CornerRadius="8" Opacity="0.3">
+                            <Border.Effect>
+                                <DropShadowEffect Color="{StaticResource PrimaryColor}" BlurRadius="8" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <Border Background="{StaticResource PrimaryBrush}" CornerRadius="8"/>
+                        </Border>
+                        
+                        <!-- Elemento principal -->
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"
+                                              TextOptions.TextFormattingMode="Display"/>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryDarkBrush}"/>
@@ -263,7 +276,7 @@
         <Setter Property="MinHeight"       Value="120"/>
         <Setter Property="AcceptsReturn"   Value="True"/>
         <Setter Property="TextWrapping"    Value="Wrap"/>
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
         <Setter Property="SelectionBrush" Value="{StaticResource AccentVeryLightBrush}"/>
         <Setter Property="CaretBrush"     Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Template">
@@ -310,7 +323,7 @@
 
     <!-- Aux Template for Editable ComboBox -->
     <ControlTemplate x:Key="ComboBoxTextBoxTemplate" TargetType="TextBox">
-        <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}"/>
+        <ScrollViewer x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}"/>
     </ControlTemplate>
 
     <!-- ===== COMBO BOX — Premium Rounded Style ===== -->
@@ -365,6 +378,7 @@
                                       BorderBrush="{TemplateBinding BorderBrush}"
                                       BorderThickness="{TemplateBinding BorderThickness}"
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Focusable="False"
                                       Cursor="Hand">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
@@ -379,11 +393,14 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="32"/>
                                             </Grid.ColumnDefinitions>
+                                            <!-- Solo capturamos clics en la flecha si es editable -->
+                                            <Border x:Name="HitArea" Grid.Column="1" Background="Transparent" />
                                             <Path x:Name="Arrow"
                                                   Grid.Column="1"
                                                   Fill="{StaticResource TextMutedBrush}"
                                                   HorizontalAlignment="Center"
                                                   VerticalAlignment="Center"
+                                                  IsHitTestVisible="False"
                                                   Data="M 0 0 L 4 4 L 8 0 Z"/>
                                         </Grid>
                                     </Border>
@@ -400,6 +417,7 @@
                         </ToggleButton>
 
                         <ContentPresenter x:Name="ContentSite"
+                                          Grid.Column="0"
                                           IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
@@ -409,15 +427,17 @@
                                           HorizontalAlignment="Left"/>
 
                         <TextBox x:Name="PART_EditableTextBox"
+                                 Grid.Column="0"
                                  Style="{x:Null}"
                                  Template="{StaticResource ComboBoxTextBoxTemplate}"
-                                 HorizontalAlignment="Left"
+                                 HorizontalAlignment="Stretch"
                                  VerticalAlignment="Center"
                                  Margin="{TemplateBinding Padding}"
                                  Focusable="True"
-                                 Background="Transparent"
+                                 Background="{TemplateBinding Background}"
                                  Visibility="Hidden"
-                                 IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                                 IsReadOnly="{TemplateBinding IsReadOnly}"
+                                 Padding="0"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="HasItems" Value="False">
@@ -430,6 +450,8 @@
                             <Setter Property="IsTabStop" Value="False"/>
                             <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
                             <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                            <!-- Importante: En modo editable, el botón solo debe reaccionar a la flecha -->
+                            <Setter TargetName="ToggleButton" Property="IsHitTestVisible" Value="True"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
@@ -737,18 +759,19 @@
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfaceAltBrush}"/>
                             <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
                         </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource PrimaryLightBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
                         <Trigger Property="Role" Value="TopLevelHeader">
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Bottom"/>
                             <Setter TargetName="RightArrow" Property="Visibility" Value="Collapsed"/>
-                            <Setter TargetName="Bg" Property="CornerRadius" Value="4"/>
+                            <Setter TargetName="Bg" Property="CornerRadius" Value="6"/>
                         </Trigger>
                         <Trigger Property="Role" Value="SubmenuHeader">
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Right"/>
                             <Setter TargetName="PART_Popup" Property="VerticalOffset" Value="-3"/>
                             <Setter TargetName="RightArrow" Property="Visibility" Value="Visible"/>
-                        </Trigger>
-                        <Trigger Property="Icon" Value="{x:Null}">
-                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
