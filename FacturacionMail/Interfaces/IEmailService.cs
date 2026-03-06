@@ -1,6 +1,6 @@
 using FacturacionMail.Models;
 
-namespace FacturacionMail.Services;
+namespace FacturacionMail.Interfaces;
 
 /// <summary>
 /// Contrato para gestión de direcciones de email y envío de facturas.

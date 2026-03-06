@@ -5,11 +5,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
+using FacturacionMail.Interfaces;
 using FacturacionMail.Data;
 
 namespace FacturacionMail.ViewModels;
 
-public partial class FacturacionMailViewModel : ObservableObject
+public partial class FacturacionMailViewModel : ViewModelBase
 {
     private readonly IFacturaService _facturaService;
     private readonly IEmailService _emailService;
@@ -36,12 +37,6 @@ public partial class FacturacionMailViewModel : ObservableObject
     private bool _isDetailedMode;
 
     [ObservableProperty]
-    private string _mensajeEstado = string.Empty;
-
-    [ObservableProperty]
-    private bool _ocupado;
-
-    [ObservableProperty]
     private string _searchTerm = string.Empty;
 
     [ObservableProperty]
@@ -51,11 +46,10 @@ public partial class FacturacionMailViewModel : ObservableObject
     
     public ICollectionView ClientesView { get; }
 
-    public FacturacionMailViewModel()
+    public FacturacionMailViewModel(IFacturaService facturaService, IEmailService emailService)
     {
-        // En un entorno real esto se inyectaría
-        _facturaService = new MockDataService();
-        _emailService = (IEmailService)_facturaService;
+        _facturaService = facturaService;
+        _emailService = emailService;
 
         ClientesView = CollectionViewSource.GetDefaultView(Clientes);
         ClientesView.Filter = FiltrarCliente;

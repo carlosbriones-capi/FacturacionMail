@@ -1,6 +1,6 @@
 using FacturacionMail.Models;
 
-namespace FacturacionMail.Services;
+namespace FacturacionMail.Interfaces;
 
 /// <summary>
 /// Contrato para obtención y filtrado de facturas.

@@ -9,7 +9,7 @@
     <Style x:Key="PrimaryButtonStyle" TargetType="Button">
         <Setter Property="Background"   Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Foreground"   Value="{StaticResource TextOnPrimaryBrush}"/>
-        <Setter Property="FontFamily"   Value="Segoe UI"/>
+        <Setter Property="FontFamily"   Value="{StaticResource HeaderFontFamily}"/>
         <Setter Property="FontSize"     Value="13"/>
         <Setter Property="FontWeight"   Value="SemiBold"/>
         <Setter Property="Padding"      Value="18,8"/>
@@ -82,7 +82,7 @@
     <Style x:Key="SecondaryButtonStyle" TargetType="Button">
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="Foreground"      Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontFamily"      Value="{StaticResource MainFontFamily}"/>
         <Setter Property="FontSize"        Value="13"/>
         <Setter Property="FontWeight"      Value="Medium"/>
         <Setter Property="Padding"         Value="16,8"/>
@@ -145,7 +145,7 @@
     <Style x:Key="AccentButtonStyle" TargetType="Button">
         <Setter Property="Background"      Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Foreground"      Value="{StaticResource TextOnPrimaryBrush}"/>
-        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontFamily"      Value="{StaticResource HeaderFontFamily}"/>
         <Setter Property="FontSize"        Value="13"/>
         <Setter Property="FontWeight"      Value="SemiBold"/>
         <Setter Property="Padding"         Value="18,8"/>
@@ -222,10 +222,10 @@
 
     <!-- ===== TEXT BOX — Underline style ===== -->
     <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
-        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontFamily"      Value="{StaticResource MainFontFamily}"/>
         <Setter Property="FontSize"        Value="13"/>
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Background"      Value="{StaticResource SurfaceAltBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding"         Value="8,6"/>
@@ -266,10 +266,10 @@
 
     <!-- ===== TEXT AREA (MULTILINE — Card-style composition area) ===== -->
     <Style x:Key="ModernTextAreaStyle" TargetType="TextBox">
-        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontFamily"      Value="{StaticResource MainFontFamily}"/>
         <Setter Property="FontSize"        Value="13"/>
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Background"      Value="{StaticResource SurfaceAltBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding"         Value="12,10"/>
@@ -277,7 +277,7 @@
         <Setter Property="AcceptsReturn"   Value="True"/>
         <Setter Property="TextWrapping"    Value="Wrap"/>
         <Setter Property="VerticalScrollBarVisibility" Value="Hidden"/>
-        <Setter Property="SelectionBrush" Value="{StaticResource AccentVeryLightBrush}"/>
+        <Setter Property="SelectionBrush" Value="{StaticResource PrimaryVeryLightBrush}"/>
         <Setter Property="CaretBrush"     Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -294,14 +294,13 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentLightBrush}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryLightBrush}"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
-                            <Setter TargetName="border" Property="Background" Value="#FFFFFF"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
                             <Setter TargetName="border" Property="Effect">
                                 <Setter.Value>
-                                    <DropShadowEffect Color="{StaticResource AccentColor}" BlurRadius="6" ShadowDepth="0" Opacity="0.15"/>
+                                    <DropShadowEffect Color="{StaticResource PrimaryColor}" BlurRadius="6" ShadowDepth="0" Opacity="0.15"/>
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
@@ -328,10 +327,10 @@
 
     <!-- ===== COMBO BOX — Premium Rounded Style ===== -->
     <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
-        <Setter Property="FontFamily"      Value="Segoe UI"/>
+        <Setter Property="FontFamily"      Value="{StaticResource MainFontFamily}"/>
         <Setter Property="FontSize"        Value="13"/>
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="Background"      Value="{StaticResource SurfaceAltBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding"         Value="10,4,8,4"/>
@@ -463,9 +462,54 @@
     </Style>
 
 
+    <!-- ===== COMBO BOX ITEM — Clean Rounded Interaction ===== -->
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Margin="4,1"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource SurfaceAltBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource PrimaryVeryLightBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryDarkBrush}"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource RowSelectedBrush}"/>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ===== LABEL ===== -->
     <Style x:Key="FormLabelStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily"  Value="Segoe UI"/>
+        <Setter Property="FontFamily"  Value="{StaticResource HeaderFontFamily}"/>
         <Setter Property="FontSize"    Value="12"/>
         <Setter Property="FontWeight"  Value="SemiBold"/>
         <Setter Property="Foreground"  Value="{StaticResource TextSecondaryBrush}"/>
@@ -553,7 +597,7 @@
 
     <!-- ===== SECTION TITLE ===== -->
     <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily"  Value="Segoe UI"/>
+        <Setter Property="FontFamily"  Value="{StaticResource HeaderFontFamily}"/>
         <Setter Property="FontSize"    Value="12"/>
         <Setter Property="FontWeight"  Value="SemiBold"/>
         <Setter Property="Foreground"  Value="{StaticResource PrimaryDarkBrush}"/>
@@ -617,37 +661,57 @@
         </Setter>
     </Style>
 
-    <!-- ===== TAB CONTROL — Pilled selector style ===== -->
+    <!-- ===== TAB CONTROL — Modern Underline Style ===== -->
     <Style x:Key="ModernTabItemStyle" TargetType="TabItem">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="13"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Padding" Value="16,8"/>
-        <Setter Property="Margin" Value="0,0,8,0"/>
+        <Setter Property="FontFamily" Value="{StaticResource HeaderFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Padding" Value="16,10"/>
+        <Setter Property="Margin" Value="0,0,4,0"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
-                    <Border x:Name="border"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="8"
-                            Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="True">
-                        <ContentPresenter x:Name="content"
-                                          ContentSource="Header"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
-                    </Border>
+                    <Grid x:Name="Root" Background="Transparent" MinHeight="42">
+                        <!-- El texto/contenido siempre centrado en el espacio total -->
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="content"
+                                              ContentSource="Header"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </Border>
+                        
+                        <!-- Indicador de selección (Alineado al fondo sin empujar el texto) -->
+                        <Border x:Name="SelectionIndicator" 
+                                Height="3" 
+                                Width="0"
+                                Background="Transparent"
+                                CornerRadius="1.5"
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,1"/>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource SurfaceAltBrush}"/>
                             <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter TargetName="border" Property="Background" Value="#0A28627D"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryBrush}"/>
-                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter TargetName="SelectionIndicator" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter TargetName="SelectionIndicator" Property="Width" Value="32"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -686,9 +750,141 @@
     <Style x:Key="ModernMenuStyle" TargetType="Menu">
         <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontFamily" Value="{StaticResource HeaderFontFamily}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Padding" Value="10,2"/>
+    </Style>
+
+    <!-- ===== BRAND NEW HEADER MENU STYLE (Dark BG) ===== -->
+    <Style x:Key="HeaderMenuStyle" TargetType="Menu">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily" Value="{StaticResource HeaderFontFamily}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="10,2"/>
+    </Style>
+
+    <Style x:Key="HeaderMenuItemStyle" TargetType="MenuItem">
+        <Setter Property="Padding" Value="16,10"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryMutedBrush}"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Grid SnapsToDevicePixels="True" 
+                          TextOptions.TextFormattingMode="Display" 
+                          TextOptions.TextRenderingMode="ClearType">
+                        <!-- Background for rounding/hover -->
+                        <Border x:Name="Bg" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                Margin="4,2"/>
+                        
+                        <Grid x:Name="ContentGrid" Height="42">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="24"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto" MinWidth="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter x:Name="Icon" ContentSource="Icon" 
+                                              Width="18" Height="18" 
+                                              Margin="14,0,0,0"
+                                              Visibility="Collapsed"
+                                              VerticalAlignment="Center"/>
+                            
+                            <!-- Truco para evitar que el menú salte al cambiar de regular a bold: 
+                                 Ponemos un TextBlock invisible siempre en bold que dicta el tamaño, 
+                                 y el texto real se dibuja encima. -->
+                            <Grid Grid.Column="1" Margin="14,2,20,2" VerticalAlignment="Center">
+                                <ContentPresenter Content="{TemplateBinding Header}" 
+                                                  TextBlock.FontWeight="SemiBold" 
+                                                  Visibility="Hidden" 
+                                                  RecognizesAccessKey="True"/>
+                                <ContentPresenter x:Name="HeaderContent" 
+                                                  ContentSource="Header" 
+                                                  RecognizesAccessKey="True"
+                                                  HorizontalAlignment="Center"/>
+                            </Grid>
+
+                            <Path x:Name="RightArrow"
+                                  Grid.Column="2"
+                                  Data="M 0,0 L 3,3 L 0,6"
+                                  Stroke="{StaticResource TextOnPrimaryMutedBrush}"
+                                  StrokeThickness="1.5"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Right"
+                                  Margin="0,0,12,0"
+                                  Visibility="Collapsed"/>
+                            
+                            <!-- Bottom indicator for active page -->
+                            <Border x:Name="ActiveIndicator" 
+                                    Height="3" Width="0" 
+                                    Background="Transparent" 
+                                    CornerRadius="1.5" 
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0,0,0,0"
+                                    Visibility="Collapsed"/>
+                        </Grid>
+
+                        <Popup x:Name="PART_Popup"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                               PopupAnimation="Fade"
+                               Placement="Bottom">
+                            <!-- Dropdown background keeps the light theme style -->
+                            <Border Background="{StaticResource SurfaceBrush}"
+                                    BorderBrush="{StaticResource BorderLightBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    SnapsToDevicePixels="True"
+                                    Margin="0,4,8,8">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="16" Color="#000000" Opacity="0.08" ShadowDepth="4"/>
+                                </Border.Effect>
+                                <ItemsPresenter Margin="4"/>
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Hover state: primary light (white semi-transparent feel) & full white text -->
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="#25FFFFFF"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}"/>
+                        </Trigger>
+                        <!-- Active state: full white text, bold, accent indicator -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ActiveIndicator" Property="Background" Value="{StaticResource AccentLightBrush}"/>
+                            <Setter TargetName="ActiveIndicator" Property="Width" Value="32"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextOnPrimaryBrush}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Trigger>
+                        <Trigger Property="Role" Value="TopLevelHeader">
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Bottom"/>
+                            <Setter TargetName="RightArrow" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ContentGrid" Property="Height" Value="42"/>
+                        </Trigger>
+                        <Trigger Property="Role" Value="SubmenuHeader">
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Right"/>
+                            <Setter TargetName="PART_Popup" Property="VerticalOffset" Value="-4"/>
+                            <Setter TargetName="RightArrow" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="Role" Value="SubmenuItem">
+                            <!-- The dropdown items are light themed, so we revert to primary text colors -->
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                            <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="ContentGrid" Property="Height" Value="36"/>
+                            <Setter Property="Padding" Value="12,6"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ModernMenuItemStyle" TargetType="MenuItem">
@@ -699,12 +895,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
                     <Grid SnapsToDevicePixels="True">
+                        <!-- Botón de fondo para redondeado -->
                         <Border x:Name="Bg" 
                                 Background="{TemplateBinding Background}" 
-                                CornerRadius="4"
-                                Margin="1,1"/>
+                                CornerRadius="8"
+                                Margin="2,1"/>
                         
-                        <Grid>
+                        <!-- Contenedor principal Grid para permitir superposición de la barra activa sin desplazar el texto -->
+                        <Grid x:Name="ContentGrid" Height="38">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="20"/>
                                 <ColumnDefinition Width="*"/>
@@ -713,13 +911,13 @@
 
                             <ContentPresenter x:Name="Icon" ContentSource="Icon" 
                                               Width="16" Height="16" 
-                                              Margin="4,0,8,0"
+                                              Margin="8,0,0,0"
                                               Visibility="Collapsed"
                                               VerticalAlignment="Center"/>
                             
                             <ContentPresenter Grid.Column="1" 
                                               ContentSource="Header" 
-                                              Margin="8,2,14,2" 
+                                              Margin="10,2,14,2" 
                                               VerticalAlignment="Center"
                                               RecognizesAccessKey="True"/>
 
@@ -730,8 +928,18 @@
                                   StrokeThickness="1.5"
                                   VerticalAlignment="Center"
                                   HorizontalAlignment="Right"
-                                  Margin="0,0,8,0"
+                                  Margin="0,0,10,0"
                                   Visibility="Collapsed"/>
+                            
+                            <!-- Indicador de página activa (Alineado al fondo sin desplazar el contenido del grid) -->
+                            <Border x:Name="ActiveIndicator" 
+                                    Height="3" Width="0" 
+                                    Background="Transparent" 
+                                    CornerRadius="1.5" 
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0,0,0,1"
+                                    Visibility="Collapsed"/>
                         </Grid>
 
                         <Popup x:Name="PART_Popup"
@@ -743,13 +951,13 @@
                             <Border Background="{StaticResource SurfaceBrush}"
                                     BorderBrush="{StaticResource BorderLightBrush}"
                                     BorderThickness="1"
-                                    CornerRadius="6"
+                                    CornerRadius="10"
                                     SnapsToDevicePixels="True"
-                                    Margin="0,2,8,8">
+                                    Margin="0,4,8,8">
                                 <Border.Effect>
-                                    <DropShadowEffect BlurRadius="12" Color="#000000" Opacity="0.06" ShadowDepth="2"/>
+                                    <DropShadowEffect BlurRadius="16" Color="#000000" Opacity="0.08" ShadowDepth="4"/>
                                 </Border.Effect>
-                                <ItemsPresenter Margin="2"/>
+                                <ItemsPresenter Margin="4"/>
                             </Border>
                         </Popup>
                     </Grid>
@@ -760,18 +968,31 @@
                             <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource PrimaryLightBrush}"/>
-                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="ActiveIndicator" Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
                         </Trigger>
                         <Trigger Property="Role" Value="TopLevelHeader">
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Bottom"/>
                             <Setter TargetName="RightArrow" Property="Visibility" Value="Collapsed"/>
-                            <Setter TargetName="Bg" Property="CornerRadius" Value="6"/>
+                            <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ContentGrid" Property="Height" Value="38"/>
                         </Trigger>
                         <Trigger Property="Role" Value="SubmenuHeader">
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Right"/>
-                            <Setter TargetName="PART_Popup" Property="VerticalOffset" Value="-3"/>
+                            <Setter TargetName="PART_Popup" Property="VerticalOffset" Value="-4"/>
                             <Setter TargetName="RightArrow" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <!-- Si el menú es un hijo, no mostrar el indicador de abajo -->
+                        <Trigger Property="Role" Value="SubmenuItem">
+                            <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Collapsed"/>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <!-- Opcional: animaciones -->
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

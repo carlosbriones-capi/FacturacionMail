@@ -6,24 +6,19 @@ using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Data;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
+using FacturacionMail.Interfaces;
 
 namespace FacturacionMail.ViewModels;
 
-public partial class EstadoEnvioMailViewModel : ObservableObject
+public partial class EstadoEnvioMailViewModel : ViewModelBase
 {
     private readonly IEmailService _emailService;
 
-    [ObservableProperty]
-    private bool _ocupado;
-
-    [ObservableProperty]
-    private string _mensajeEstado = string.Empty;
-
     public ObservableCollection<EstadoEnvioMail> Estados { get; } = [];
 
-    public EstadoEnvioMailViewModel()
+    public EstadoEnvioMailViewModel(IEmailService emailService)
     {
-        _emailService = new MockDataService();
+        _emailService = emailService;
         _ = CargarDatosAsync();
     }
 

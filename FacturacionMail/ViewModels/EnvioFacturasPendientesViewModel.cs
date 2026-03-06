@@ -4,12 +4,13 @@ using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Data;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
+using FacturacionMail.Interfaces;
 using System.ComponentModel;
 using System.Windows.Data;
 
 namespace FacturacionMail.ViewModels;
 
-public partial class EnvioFacturasPendientesViewModel : ObservableObject
+public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 {
     private readonly IFacturaService _facturaService;
     private readonly IEmailService   _emailService;
@@ -41,12 +42,6 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     private bool _detalleVisible = false;
 
     [ObservableProperty]
-    private bool _ocupado = false;
-
-    [ObservableProperty]
-    private string _mensajeEstado = string.Empty;
-
-    [ObservableProperty]
     private bool _seleccionarTodasDirecciones = true;
 
     [ObservableProperty]
@@ -56,6 +51,43 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     private string _filtroTexto = string.Empty;
 
     private bool _isUpdatingSelection = false;
+
+    // ── Email ─────────────────────────────────────────────────────────
+
+    public EmailFormViewModel EmailForm { get; }
+
+    // ── Constructor ───────────────────────────────────────────────────
+
+    public EnvioFacturasPendientesViewModel(IFacturaService facturaService, IEmailService emailService)
+    {
+        _facturaService = facturaService;
+        _emailService   = emailService;
+
+        EmailForm = new EmailFormViewModel(
+            "Facturas pendientes — CM Capital Markets",
+            "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es",
+            OnInsertarDireccion);
+
+        // Configurar la vista filtrada
+        ClientesView = CollectionViewSource.GetDefaultView(Clientes);
+        ClientesView.Filter = (obj) =>
+        {
+            if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
+            if (obj is not Cliente c) return false;
+
+            // Filtrar por código (comienzo del string) o nombre (contiene)
+            string search = FiltroTexto.ToLower();
+            return c.Codigo.ToString().Contains(search) || 
+                   c.Nombre.ToLower().Contains(search);
+        };
+
+        _ = CargarClientesAsync();
+    }
+
+    protected override void OnOcupadoChangedVirtual(bool value)
+    {
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
 
     partial void OnFiltroTextoChanged(string value)
     {
@@ -80,41 +112,17 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
-
-    // ── Email ─────────────────────────────────────────────────────────
-
-    [ObservableProperty]
-    private string _asuntoEmail = "Facturas pendientes — CM Capital Markets";
-
-    [ObservableProperty]
-    private string _cuerpoEmail =
-        "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es";
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(InsertarDireccionCommand))]
-    private string _nuevaDireccion = string.Empty;
-
-    // ── Constructor ───────────────────────────────────────────────────
-
-    public EnvioFacturasPendientesViewModel()
+    private void OnInsertarDireccion(string direccion)
     {
-        _facturaService = new MockDataService();
-        _emailService   = (IEmailService)_facturaService;
-
-        // Configurar la vista filtrada
-        ClientesView = CollectionViewSource.GetDefaultView(Clientes);
-        ClientesView.Filter = (obj) =>
+        Direcciones.Add(new DireccionEmail
         {
-            if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
-            if (obj is not Cliente c) return false;
-
-            // Filtrar por código (comienzo del string) o nombre (contiene)
-            string search = FiltroTexto.ToLower();
-            return c.Codigo.ToString().Contains(search) || 
-                   c.Nombre.ToLower().Contains(search);
-        };
-
-        _ = CargarClientesAsync();
+            Id = Direcciones.Count + 1000,
+            Email = direccion,
+            Nombre = "Manual",
+            Seleccionada = true,
+            CodigoCliente = ClienteSeleccionado?.Codigo ?? 0
+        });
+        EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
     // ── Reactive handlers ─────────────────────────────────────────────
@@ -245,7 +253,7 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
                 return;
             }
 
-            await _emailService.EnviarMailAsync(AsuntoEmail, CuerpoEmail, selDirs, selFact);
+            await _emailService.EnviarMailAsync(EmailForm.AsuntoEmail, EmailForm.CuerpoEmail, selDirs, selFact);
             MensajeEstado = $"✓ Correo enviado a {selDirs.Count} destinatario(s) con {selFact.Count} factura(s).";
         }
         catch (Exception ex)
@@ -262,23 +270,6 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         !Ocupado && DetalleVisible &&
         ClienteSeleccionado is not null &&
         Direcciones.Any(d => d.Seleccionada);
-
-    [RelayCommand(CanExecute = nameof(CanInsertarDireccion))]
-    private void InsertarDireccion()
-    {
-        Direcciones.Add(new DireccionEmail
-        {
-            Id = Direcciones.Count + 1000,
-            Email = NuevaDireccion.Trim(),
-            Nombre = "Manual",
-            Seleccionada = true,
-            CodigoCliente = ClienteSeleccionado?.Codigo ?? 0
-        });
-        NuevaDireccion = string.Empty;
-        EnviarMailCommand.NotifyCanExecuteChanged();
-    }
-
-    private bool CanInsertarDireccion() => !string.IsNullOrWhiteSpace(NuevaDireccion);
 
     [RelayCommand]
     private void EliminarDireccion(DireccionEmail? dir)

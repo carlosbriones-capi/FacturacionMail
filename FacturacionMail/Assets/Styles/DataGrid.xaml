@@ -14,7 +14,7 @@
         <Setter Property="AlternatingRowBackground" Value="#F4F8FA"/>
         <Setter Property="HorizontalGridLinesBrush" Value="#E8EFF3"/>
         <Setter Property="VerticalGridLinesBrush"   Value="Transparent"/>
-        <Setter Property="FontFamily"              Value="Segoe UI"/>
+        <Setter Property="FontFamily"              Value="{StaticResource MainFontFamily}"/>
         <Setter Property="FontSize"                Value="13"/>
         <Setter Property="Foreground"              Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="SelectionMode"           Value="Single"/>
@@ -36,7 +36,7 @@
                     <Grid SnapsToDevicePixels="True">
                         <!-- Mask for rounded corners clipping -->
                         <Grid.OpacityMask>
-                            <VisualBrush>
+                            <VisualBrush Stretch="None" AlignmentX="Left" AlignmentY="Top">
                                 <VisualBrush.Visual>
                                     <Border CornerRadius="12" Background="Black" 
                                             Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
@@ -140,7 +140,7 @@
     <!-- ===== DATAGRID COLUMN HEADER — Gradient teal with white text ===== -->
     <Style x:Key="ModernColumnHeaderStyle" TargetType="DataGridColumnHeader">
         <Setter Property="Foreground"     Value="#FFFFFF"/>
-        <Setter Property="FontFamily"     Value="Segoe UI"/>
+        <Setter Property="FontFamily"     Value="{StaticResource HeaderFontFamily}"/>
         <Setter Property="FontSize"       Value="11"/>
         <Setter Property="FontWeight"     Value="SemiBold"/>
         <Setter Property="Padding"        Value="14,0"/>

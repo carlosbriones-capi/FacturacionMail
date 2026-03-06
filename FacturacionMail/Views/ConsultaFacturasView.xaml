@@ -58,7 +58,7 @@
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                         <TextBlock Text="🔍" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,6,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Consulta de facturas"
-                                   FontFamily="Segoe UI" FontSize="15"
+                                   FontFamily="{StaticResource HeaderFontFamily}" FontSize="15"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
@@ -190,7 +190,7 @@
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
                         <TextBlock Text="✉" FontSize="16" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Nuevo Mensaje"
-                                   FontFamily="Segoe UI" FontSize="16"
+                                   FontFamily="{StaticResource HeaderFontFamily}" FontSize="16"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
@@ -206,8 +206,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0"
                                  Style="{StaticResource ModernTextBoxStyle}"
-                                 Background="{StaticResource SurfaceAltBrush}"
-                                 Text="{Binding NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding EmailForm.NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
                                  Padding="9,6" FontSize="13"/>
                         <Button Grid.Column="2"
                                 Content="+"
@@ -215,7 +214,7 @@
                                 Height="38" Width="40"
                                 FontSize="20" FontWeight="Bold"
                                 Padding="0,0,0,2"
-                                Command="{Binding InsertarDireccionCommand}"
+                                Command="{Binding EmailForm.InsertarDireccionCommand}"
                                 ToolTip="Añadir a la lista"/>
                     </Grid>
 
@@ -257,15 +256,14 @@
                     <TextBlock Grid.Row="4" Text="Asunto" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                     <TextBox Grid.Row="5"
                              Style="{StaticResource ModernTextBoxStyle}"
-                             Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding EmailForm.AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
                              FontSize="13" Padding="9,6"
-                             Background="{StaticResource SurfaceAltBrush}"
                              Margin="0,0,0,16"/>
 
                     <TextBlock Grid.Row="6" Text="Mensaje" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                     <TextBox Grid.Row="7"
                              Style="{StaticResource ModernTextAreaStyle}"
-                             Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding EmailForm.CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
                              Margin="0,0,0,16"/>
 
                     <Button Grid.Row="8"
@@ -313,7 +311,7 @@
                             <TextBlock Text="📄" FontSize="15" Foreground="{StaticResource PrimaryBrush}"
                                        Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Facturas Adjuntas a Enviar"
-                                       FontFamily="Segoe UI" FontSize="16"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="16"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
@@ -369,15 +367,15 @@
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5">
                 <TextBlock Text="📋" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                 <TextBlock Text="Configura los criterios y pulsa"
-                           FontFamily="Segoe UI" FontSize="16"
+                           FontFamily="{StaticResource HeaderFontFamily}" FontSize="16"
                            Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center"/>
-                <TextBlock Text="▶  Procesar Selección"
-                           FontFamily="Segoe UI" FontSize="18" FontWeight="SemiBold"
+                <TextBlock Text="▶  Procesar"
+                           FontFamily="{StaticResource HeaderFontFamily}" FontSize="18" FontWeight="SemiBold"
                            Foreground="{StaticResource PrimaryBrush}"
                            HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 <TextBlock Text="para cargar las facturas y gestionar el envío por email."
-                           FontFamily="Segoe UI" FontSize="14"
+                           FontFamily="{StaticResource HeaderFontFamily}" FontSize="14"
                            Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center" Margin="0,8,0,0"/>
             </StackPanel>

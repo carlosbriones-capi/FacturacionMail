@@ -2,6 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- ===== 4-COLOR DESIGN SYSTEM ===== -->
+    
+    <!-- Tipografía Moderna -->
+    <FontFamily x:Key="MainFontFamily">Segoe UI Variable Text, Segoe UI, Tahoma</FontFamily>
+    <FontFamily x:Key="HeaderFontFamily">Segoe UI Variable Display, Segoe UI Semibold, Bahnschrift, Segoe UI</FontFamily>
+
 
     <!-- Fondos -->
     <Color x:Key="AppBackgroundColor">#F6F8FA</Color>

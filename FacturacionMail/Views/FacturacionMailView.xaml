@@ -12,10 +12,6 @@
              TextOptions.TextRenderingMode="ClearType"
              UseLayoutRounding="True"
              SnapsToDevicePixels="True">
-    
-    <UserControl.DataContext>
-        <vm:FacturacionMailViewModel/>
-    </UserControl.DataContext>
 
     <UserControl.Resources>
     </UserControl.Resources>
@@ -61,7 +57,7 @@
                         <TextBlock Text="✉" FontSize="15" Foreground="{StaticResource PrimaryBrush}"
                                    Margin="0,0,8,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Facturación Mail"
-                                   FontFamily="Segoe UI" FontSize="16"
+                                   FontFamily="{StaticResource HeaderFontFamily}" FontSize="16"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
@@ -141,7 +137,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- ─── Panel Izquierdo: Lista de Clientes ─── -->
-            <ContentControl Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
+            <ContentControl Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Stretch">
                 <DockPanel>
                     <!-- Cabecera de la lista -->
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,16">
@@ -156,7 +152,7 @@
                             <TextBlock Text="👥" FontSize="15" Foreground="{StaticResource PrimaryBrush}"
                                        Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Destinatarios"
-                                       FontFamily="Segoe UI" FontSize="16"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="16"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
@@ -172,8 +168,7 @@
                         <Grid Grid.Column="3">
                             <TextBox Style="{StaticResource ModernTextBoxStyle}"
                                      Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
-                                     Padding="30,7,8,7" 
-                                     Background="{StaticResource SurfaceAltBrush}"/>
+                                     Padding="30,7,8,7"/>
                             <TextBlock Text="🔍" Foreground="{StaticResource TextMutedBrush}"
                                        FontSize="12" Margin="10,0,0,0"
                                        VerticalAlignment="Center" HorizontalAlignment="Left"
@@ -242,7 +237,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
                             <TextBlock Text="⚙" FontSize="15" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Asunto del Correo"
-                                       FontFamily="Segoe UI" FontSize="15"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="15"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
@@ -250,8 +245,7 @@
                         
                         <TextBox Style="{StaticResource ModernTextBoxStyle}"
                                  Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
-                                 Padding="12,8" FontSize="13" FontWeight="SemiBold"
-                                 Background="{StaticResource SurfaceAltBrush}"/>
+                                 Padding="12,8" FontSize="13" FontWeight="SemiBold"/>
                     </StackPanel>
                 </ContentControl>
 
@@ -267,7 +261,7 @@
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
                             <TextBlock Text="📝" FontSize="15" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Text="Cuerpo del Mensaje"
-                                       FontFamily="Segoe UI" FontSize="15"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="15"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
@@ -276,7 +270,6 @@
                         <TextBox Grid.Row="1" Style="{StaticResource DynamicBodyTextBoxStyle}"
                                  AcceptsReturn="True" TextWrapping="Wrap"
                                  VerticalScrollBarVisibility="Hidden"
-                                 Background="{StaticResource SurfaceAltBrush}"
                                  Margin="0,0,0,20"/>
 
                         <Button Grid.Row="2"

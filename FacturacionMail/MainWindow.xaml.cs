@@ -1,6 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using FacturacionMail.Views;
+using FacturacionMail.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace FacturacionMail;
 
@@ -9,6 +12,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        DataContext = App.Services?.GetRequiredService<FacturacionMailViewModel>();
     }
 
     private void OnConsultaFacturasClick(object sender, RoutedEventArgs e)

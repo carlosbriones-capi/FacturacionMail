@@ -1,82 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Npgsql;
 using FacturacionMail.Models;
+using FacturacionMail.Interfaces;
 
 namespace FacturacionMail.Services
 {
-    /// <summary>
-    /// Implementación real de los servicios de datos conectada a PostgreSQL.
-    /// Lee la configuración desde appsettings.json.
-    /// </summary>
-    public class DatabaseService : IFacturaService, IEmailService
+    public class EmailService : DatabaseServiceBase, IEmailService
     {
-        private readonly string _connectionString;
-        private readonly IConfiguration _config;
-
-        public DatabaseService(IConfiguration config)
+        public EmailService(IConfiguration config) : base(config)
         {
-            _config = config;
-            _connectionString = config.GetSection("Database:ConnectionString").Value 
-                                ?? throw new InvalidOperationException("ConnectionString no configurada.");
         }
-
-        private string GetTableName(string key) => _config.GetSection($"Database:Tables:{key}").Value ?? key;
-        private string GetFunctionName(string key) => _config.GetSection($"Database:Functions:{key}").Value ?? key;
-
-        #region IFacturaService Implementation
-
-        public async Task<IEnumerable<Factura>> ObtenerFacturasAsync(
-            string mesAnio,
-            int clienteDesde,
-            int clienteHasta,
-            int facturaDesde,
-            int facturaHasta,
-            bool soloActuales)
-        {
-            var facturas = new List<Factura>();
-            string funcName = GetFunctionName(soloActuales ? "DameFacturas" : "DameFacturasAll");
-            
-            // using (var conn = new NpgsqlConnection(_connectionString))
-            // {
-            //     await conn.OpenAsync();
-            //     using (var cmd = new NpgsqlCommand(funcName, conn))
-            //     {
-            //         cmd.CommandType = CommandType.StoredProcedure;
-            //         cmd.Parameters.AddWithValue("p_mes_anio", mesAnio);
-            //         // ...
-            //     }
-            // }
-
-            return facturas;
-        }
-
-        public async Task<IEnumerable<Cliente>> ObtenerClientesAsync()
-        {
-            var clientes = new List<Cliente>();
-            string funcName = GetFunctionName("DameClientes");
-
-            // using (var conn = new NpgsqlConnection(_connectionString))
-            // {
-            //     await conn.OpenAsync();
-            //     using (var cmd = new NpgsqlCommand(funcName, conn))
-            //     {
-            //         cmd.CommandType = CommandType.StoredProcedure;
-            //         // ... ejecutar y mapear
-            //     }
-            // }
-
-            return clientes;
-        }
-
-        #endregion
-
-        #region IEmailService Implementation
 
         public async Task<IEnumerable<DireccionEmail>> ObtenerDireccionesAsync(int codigoCliente)
         {
@@ -150,7 +86,5 @@ namespace FacturacionMail.Services
             
             return estados;
         }
-
-        #endregion
     }
 }

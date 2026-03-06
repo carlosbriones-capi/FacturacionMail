@@ -4,10 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Data;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
+using FacturacionMail.Interfaces;
 
 namespace FacturacionMail.ViewModels;
 
-public partial class ConsultaFacturasViewModel : ObservableObject
+public partial class ConsultaFacturasViewModel : ViewModelBase
 {
     private readonly IFacturaService _facturaService;
     private readonly IEmailService _emailService;
@@ -34,28 +35,13 @@ public partial class ConsultaFacturasViewModel : ObservableObject
 
     // ── Email ────────────────────────────────────────────────────────
 
-    [ObservableProperty]
-    private string _asuntoEmail = "Facturas C.M. Capital Markets";
-
-    [ObservableProperty]
-    private string _cuerpoEmail = "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es";
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(InsertarDireccionCommand))]
-    private string _nuevaDireccion = string.Empty;
+    public EmailFormViewModel EmailForm { get; }
 
     // ── Estado UI ────────────────────────────────────────────────────
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EnviarMailCommand))]
     private bool _resultadosVisibles = false;
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ProcesarSeleccionCommand), nameof(EnviarMailCommand))]
-    private bool _ocupado = false;
-
-    [ObservableProperty]
-    private string _mensajeEstado = string.Empty;
 
     // ── Colecciones ───────────────────────────────────────────────────
 
@@ -102,15 +88,37 @@ public partial class ConsultaFacturasViewModel : ObservableObject
         EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
-    public ConsultaFacturasViewModel()
+    public ConsultaFacturasViewModel(IFacturaService facturaService, IEmailService emailService)
     {
-        _facturaService = new MockDataService();
-        _emailService = (IEmailService)_facturaService;
+        _facturaService = facturaService;
+        _emailService = emailService;
+
+        EmailForm = new EmailFormViewModel(
+            "Facturas C.M. Capital Markets",
+            "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es",
+            OnInsertarDireccion);
         
         // Listen to collection changes to update EnviarMailCommand state
         Direcciones.CollectionChanged += (s, e) => {
             CheckGlobalSelectionStates();
         };
+    }
+
+    private void OnInsertarDireccion(string direccion)
+    {
+        Direcciones.Add(new DireccionEmail
+        {
+            Id = Direcciones.Count + 100,
+            Email = direccion,
+            Nombre = "Manual",
+            Seleccionada = true
+        });
+    }
+
+    protected override void OnOcupadoChangedVirtual(bool value)
+    {
+        ProcesarSeleccionCommand.NotifyCanExecuteChanged();
+        EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
     // ── Comandos ──────────────────────────────────────────────────────
@@ -180,7 +188,7 @@ public partial class ConsultaFacturasViewModel : ObservableObject
             var selFact = Facturas.Where(f => f.Seleccionada).ToList();
             var selDirs = Direcciones.Where(d => d.Seleccionada).ToList();
 
-            await _emailService.EnviarMailAsync(AsuntoEmail, CuerpoEmail, selDirs, selFact);
+            await _emailService.EnviarMailAsync(EmailForm.AsuntoEmail, EmailForm.CuerpoEmail, selDirs, selFact);
 
             MensajeEstado = $"✓ Mail enviado correctamente a {selDirs.Count} dirección(es) con {selFact.Count} factura(s).";
         }
@@ -211,21 +219,6 @@ public partial class ConsultaFacturasViewModel : ObservableObject
         ResultadosVisibles = false;
         MensajeEstado = string.Empty;
     }
-
-    [RelayCommand(CanExecute = nameof(CanInsertarDireccion))]
-    private void InsertarDireccion()
-    {
-        Direcciones.Add(new DireccionEmail
-        {
-            Id = Direcciones.Count + 100,
-            Email = NuevaDireccion.Trim(),
-            Nombre = "Manual",
-            Seleccionada = true
-        });
-        NuevaDireccion = string.Empty;
-    }
-
-    private bool CanInsertarDireccion() => !string.IsNullOrWhiteSpace(NuevaDireccion);
 
     [RelayCommand]
     private void EliminarDireccion(DireccionEmail? dir)

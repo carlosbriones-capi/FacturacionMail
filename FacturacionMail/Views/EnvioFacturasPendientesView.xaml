@@ -19,10 +19,6 @@
         <local:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
 
-    <UserControl.DataContext>
-        <vm:EnvioFacturasPendientesViewModel/>
-    </UserControl.DataContext>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -59,9 +55,9 @@
                 <!-- Título -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                        <TextBlock Text="📨" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="⏳" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,6,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Envío de Facturas Pendientes"
-                                   FontFamily="Segoe UI" FontSize="15"
+                                   FontFamily="{StaticResource HeaderFontFamily}" FontSize="15"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
@@ -116,7 +112,7 @@
                 <!-- Mensaje de estado (inline) -->
                 <TextBlock Grid.Column="5"
                            Text="{Binding MensajeEstado}"
-                           FontFamily="Segoe UI" FontSize="12"
+                           FontFamily="{StaticResource MainFontFamily}" FontSize="12"
                            Foreground="{StaticResource TextMutedBrush}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
@@ -161,15 +157,15 @@
                         Visibility="{Binding DetalleVisible, Converter={StaticResource InvertBoolToVisibility}}">
                 <TextBlock Text="🏢" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                 <TextBlock Text="Selecciona un cliente"
-                           FontFamily="Segoe UI" FontSize="16"
+                           FontFamily="{StaticResource MainFontFamily}" FontSize="16"
                            Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center"/>
                 <TextBlock Text="y elige una lista de envío"
-                           FontFamily="Segoe UI" FontSize="18" FontWeight="SemiBold"
+                           FontFamily="{StaticResource HeaderFontFamily}" FontSize="18" FontWeight="SemiBold"
                            Foreground="{StaticResource PrimaryBrush}"
                            HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 <TextBlock Text="para ver los destinatarios y las facturas pendientes."
-                           FontFamily="Segoe UI" FontSize="14"
+                           FontFamily="{StaticResource MainFontFamily}" FontSize="14"
                            Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center" Margin="0,8,0,0"/>
             </StackPanel>
@@ -216,7 +212,7 @@
                                        Foreground="{StaticResource PrimaryBrush}"
                                        Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="1" Text="Nuevo Mensaje"
-                                       FontFamily="Segoe UI" FontSize="16" FontWeight="SemiBold"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
                         </Grid>
@@ -231,7 +227,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="📋" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding ListaSeleccionada.Nombre}"
-                                    FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                    FontFamily="{StaticResource HeaderFontFamily}" FontSize="13" FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryDarkBrush}"
                                     VerticalAlignment="Center"/>
                                 <Border Background="{StaticResource PrimaryLightBrush}"
@@ -251,8 +247,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0"
                                      Style="{StaticResource ModernTextBoxStyle}"
-                                     Background="{StaticResource SurfaceAltBrush}"
-                                     Text="{Binding NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding EmailForm.NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
                                      Padding="9,6" FontSize="13"/>
                             <Button Grid.Column="2"
                                     Content="+"
@@ -260,7 +255,7 @@
                                     Height="38" Width="42"
                                     FontSize="20" FontWeight="Bold"
                                     Padding="0,0,0,2"
-                                    Command="{Binding InsertarDireccionCommand}"
+                                    Command="{Binding EmailForm.InsertarDireccionCommand}"
                                     ToolTip="Añadir manual"/>
                         </Grid>
 
@@ -305,15 +300,14 @@
                         <TextBlock Grid.Row="6" Text="Asunto" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                         <TextBox Grid.Row="7"
                                  Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding EmailForm.AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
                                  FontSize="13" Padding="9,6"
-                                 Background="{StaticResource SurfaceAltBrush}"
                                  Margin="0,0,0,16"/>
 
                         <TextBlock Grid.Row="8" Text="Mensaje" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                         <TextBox Grid.Row="9"
                                  Style="{StaticResource ModernTextAreaStyle}"
-                                 Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding EmailForm.CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,16"/>
 
                         <Button Grid.Row="10"
@@ -354,7 +348,7 @@
                                        Foreground="{StaticResource PrimaryBrush}"
                                        Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="1" Text="Facturas Pendientes"
-                                       FontFamily="Segoe UI" FontSize="16" FontWeight="SemiBold"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
                             <Border Grid.Column="2" Background="{StaticResource PrimaryLightBrush}"
@@ -372,7 +366,7 @@
                                 Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🏢" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                <TextBlock FontFamily="{StaticResource HeaderFontFamily}" FontSize="13" FontWeight="SemiBold"
                                            Foreground="{StaticResource PrimaryDarkBrush}"
                                            VerticalAlignment="Center">
                                     <TextBlock.Text>
