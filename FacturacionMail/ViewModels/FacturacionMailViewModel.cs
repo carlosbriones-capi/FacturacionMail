@@ -6,12 +6,12 @@ using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
 using FacturacionMail.Interfaces;
-using FacturacionMail.Data;
 
 namespace FacturacionMail.ViewModels;
 
 public partial class FacturacionMailViewModel : ViewModelBase
 {
+    private readonly IClienteService _clienteService;
     private readonly IFacturaService _facturaService;
     private readonly IEmailService _emailService;
 
@@ -42,12 +42,24 @@ public partial class FacturacionMailViewModel : ViewModelBase
     [ObservableProperty]
     private bool _seleccionarTodo = true;
 
-    public ObservableCollection<ClienteSeleccionable> Clientes { get; } = new();
+    public string CuerpoEmailActual
+    {
+        get => IsDetailedMode ? CuerpoEmailDetallado : CuerpoEmailMensual;
+        set
+        {
+            if (IsDetailedMode) CuerpoEmailDetallado = value;
+            else CuerpoEmailMensual = value;
+            OnPropertyChanged(nameof(CuerpoEmailActual));
+        }
+    }
+
+    public ObservableCollection<Cliente> Clientes { get; } = new();
     
     public ICollectionView ClientesView { get; }
 
-    public FacturacionMailViewModel(IFacturaService facturaService, IEmailService emailService)
+    public FacturacionMailViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService)
     {
+        _clienteService = clienteService;
         _facturaService = facturaService;
         _emailService = emailService;
 
@@ -70,11 +82,10 @@ public partial class FacturacionMailViewModel : ViewModelBase
 
     private bool FiltrarCliente(object obj)
     {
-        if (obj is ClienteSeleccionable cs)
+        if (obj is Cliente c)
         {
             if (string.IsNullOrWhiteSpace(SearchTerm)) return true;
-            return cs.Cliente.Codigo.ToString().Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                   cs.Cliente.Nombre.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase);
+            return c.Codigo.ToString().Contains(SearchTerm, StringComparison.OrdinalIgnoreCase);
         }
         return false;
     }
@@ -85,12 +96,19 @@ public partial class FacturacionMailViewModel : ViewModelBase
         Ocupado = true;
         try
         {
-            var clientes = await _facturaService.ObtenerClientesAsync();
+            var clientes = await _clienteService.ObtenerClientesAsync();
+            var excluidos = await _clienteService.ObtenerClientesExcluidosAsync();
+            var setExcluidos = new HashSet<string>(excluidos);
+
             Clientes.Clear();
-            foreach (var c in clientes)
+            // Mostrar solo clientes únicos (por Codigo) y NO excluidos para el combo
+            foreach (var c in clientes.DistinctBy(c => c.Codigo))
             {
-                // En modo mensual (no detallado) seleccionamos por defecto
-                Clientes.Add(new ClienteSeleccionable(c, !IsDetailedMode));
+                if (!setExcluidos.Contains(c.Codigo.ToString()))
+                {
+                    c.IsSelected = !IsDetailedMode;
+                    Clientes.Add(c);
+                }
             }
         }
         catch (Exception ex)
@@ -106,13 +124,13 @@ public partial class FacturacionMailViewModel : ViewModelBase
     [RelayCommand]
     private void MarcarTodos()
     {
-        foreach (ClienteSeleccionable c in ClientesView) c.IsSelected = true;
+        foreach (Cliente c in ClientesView) c.IsSelected = true;
     }
 
     [RelayCommand]
     private void DesmarcarTodos()
     {
-        foreach (ClienteSeleccionable c in ClientesView) c.IsSelected = false;
+        foreach (Cliente c in ClientesView) c.IsSelected = false;
     }
 
     [RelayCommand]
@@ -161,5 +179,6 @@ public partial class FacturacionMailViewModel : ViewModelBase
         {
             c.IsSelected = !value;
         }
+        OnPropertyChanged(nameof(CuerpoEmailActual));
     }
 }

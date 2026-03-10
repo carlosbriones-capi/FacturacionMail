@@ -89,7 +89,7 @@
                     <DataGridTextColumn Header="Fecha" Binding="{Binding Fecha, StringFormat=dd/MM/yyyy}" Width="90"/>
                     <DataGridTextColumn Header="Hora Ini" Binding="{Binding HoraIni}" Width="80"/>
                     <DataGridTextColumn Header="Hora Fin" Binding="{Binding HoraFin}" Width="80"/>
-                    <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente}" Width="*"/>
+                    <DataGridTextColumn Header="Código Cliente" Binding="{Binding CodigoCliente}" Width="*"/>
                     <DataGridTextColumn Header="Tipo" Binding="{Binding Tipo}" Width="80"/>
                     <DataGridTextColumn Header="Asunto" Binding="{Binding Asunto}" Width="1.5*"/>
                     <DataGridTextColumn Header="Adjuntos" Binding="{Binding Adjuntos}" Width="70">

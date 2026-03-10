@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FacturacionMail.Data;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
 using FacturacionMail.Interfaces;
@@ -12,16 +11,17 @@ namespace FacturacionMail.ViewModels;
 
 public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 {
+    private readonly IClienteService _clienteService;
     private readonly IFacturaService _facturaService;
     private readonly IEmailService   _emailService;
 
     // ── Colecciones ───────────────────────────────────────────────────
 
-    public ObservableCollection<Cliente>       Clientes   { get; } = [];
-    public ICollectionView                    ClientesView { get; }
-    public ObservableCollection<ListaEmail>    Listas     { get; } = [];
+    public ObservableCollection<Cliente> Clientes { get; } = [];
+    public ICollectionView ClientesView { get; }
+    public ObservableCollection<ListaEmail> Listas { get; } = [];
     public ObservableCollection<DireccionEmail> Direcciones { get; } = [];
-    public ObservableCollection<Factura>       Facturas   { get; } = [];
+    public ObservableCollection<Factura> Facturas { get; } = [];
 
     // ── Selección ─────────────────────────────────────────────────────
 
@@ -50,6 +50,9 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
     [ObservableProperty]
     private string _filtroTexto = string.Empty;
 
+    [ObservableProperty]
+    private bool _isFiltroAbierto = false;
+
     private bool _isUpdatingSelection = false;
 
     // ── Email ─────────────────────────────────────────────────────────
@@ -58,8 +61,9 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 
     // ── Constructor ───────────────────────────────────────────────────
 
-    public EnvioFacturasPendientesViewModel(IFacturaService facturaService, IEmailService emailService)
+    public EnvioFacturasPendientesViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService)
     {
+        _clienteService = clienteService;
         _facturaService = facturaService;
         _emailService   = emailService;
 
@@ -77,8 +81,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 
             // Filtrar por código (comienzo del string) o nombre (contiene)
             string search = FiltroTexto.ToLower();
-            return c.Codigo.ToString().Contains(search) || 
-                   c.Nombre.ToLower().Contains(search);
+            return c.Codigo.ToString().Contains(search);
         };
 
         _ = CargarClientesAsync();
@@ -92,6 +95,10 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
     partial void OnFiltroTextoChanged(string value)
     {
         ClientesView.Refresh();
+        if (!string.IsNullOrEmpty(value))
+        {
+            IsFiltroAbierto = true;
+        }
     }
 
     partial void OnSeleccionarTodasDireccionesChanged(bool value)
@@ -159,11 +166,17 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         Ocupado = true;
         try
         {
-            var clientes = await _facturaService.ObtenerClientesAsync();
+            var clientes = await _clienteService.ObtenerClientesAsync();
+            var excluidos = await _clienteService.ObtenerClientesExcluidosAsync();
+            var setExcluidos = new HashSet<string>(excluidos);
+
             Clientes.Clear();
-            // Mostrar solo clientes únicos (por Codigo) para el combo
+            // Mostrar solo clientes únicos (por Codigo) y NO excluidos para el combo
             foreach (var c in clientes.DistinctBy(c => c.Codigo))
-                Clientes.Add(c);
+            {
+                if (!setExcluidos.Contains(c.Codigo.ToString()))
+                    Clientes.Add(c);
+            }
         }
         catch (Exception ex)
         {
@@ -172,6 +185,20 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         finally
         {
             Ocupado = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task VisualizarFacturaAsync(Factura factura)
+    {
+        if (factura == null) return;
+        try
+        {
+            await _facturaService.VisualizarFacturaAsync(factura.NombreArchivo);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(ex.Message, "Error al abrir factura", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
     }
 
@@ -206,10 +233,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         try
         {
             var dirs     = await _emailService.ObtenerDireccionesPorListaAsync(listaId);
-            var facturas = await _facturaService.ObtenerFacturasAsync(
-                DateTime.Now.ToString("MM-yyyy"),
-                ClienteSeleccionado!.Codigo, ClienteSeleccionado.Codigo,
-                0, 0, true);
+            var facturas = await _facturaService.ObtenerFacturasPendientesPorListaAsync(listaId);
 
             Direcciones.Clear();
             foreach (var d in dirs) Direcciones.Add(d);

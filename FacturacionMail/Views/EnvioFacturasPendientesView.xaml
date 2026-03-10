@@ -79,14 +79,13 @@
                               Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"
                               ItemsSource="{Binding ClientesView}"
                               SelectedItem="{Binding ClienteSeleccionado, Mode=TwoWay}"
+                              IsDropDownOpen="{Binding IsFiltroAbierto, Mode=TwoWay}"
                               IsEnabled="{Binding Ocupado, Converter={StaticResource InvertBool}}">
                         <ComboBox.ItemTemplate>
 
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Codigo}" Foreground="{StaticResource TextMutedBrush}"
-                                               FontSize="11" Width="36" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Nombre}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Codigo}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -368,14 +367,8 @@
                                 <TextBlock Text="🏢" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                 <TextBlock FontFamily="{StaticResource HeaderFontFamily}" FontSize="13" FontWeight="SemiBold"
                                            Foreground="{StaticResource PrimaryDarkBrush}"
-                                           VerticalAlignment="Center">
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} — {1}">
-                                            <Binding Path="ClienteSeleccionado.Codigo"/>
-                                            <Binding Path="ClienteSeleccionado.Nombre"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
+                                           VerticalAlignment="Center"
+                                           Text="{Binding ClienteSeleccionado.Codigo, StringFormat='{}Cliente: {0}'}"/>
                             </StackPanel>
                         </Border>
 
@@ -409,7 +402,21 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Archivo"     Binding="{Binding NombreArchivo}"   Width="*"/>
+                                <DataGridTextColumn Header="Nº Factura"  Binding="{Binding NumeroFactura}"   Width="*"/>
+                                <DataGridTemplateColumn Header="Ver" Width="60" CanUserSort="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource BorderlessButtonStyle}"
+                                                    Command="{Binding DataContext.VisualizarFacturaCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="Ver PDF"
+                                                    Padding="2"
+                                                    HorizontalAlignment="Center">
+                                                <TextBlock Text="&#xE890;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{StaticResource PrimaryBrush}"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </DockPanel>

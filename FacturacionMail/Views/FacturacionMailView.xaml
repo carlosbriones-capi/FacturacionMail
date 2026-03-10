@@ -133,7 +133,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
             <!-- ─── Panel Izquierdo: Lista de Clientes ─── -->
@@ -213,9 +213,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <DataGridTextColumn Header="Código" Binding="{Binding Cliente.Codigo}"
-                                                    Width="*" ElementStyle="{StaticResource {x:Type TextBlock}}"/>
-                                <DataGridTextColumn Header="Cliente" Binding="{Binding Cliente.Nombre}"
+                                <DataGridTextColumn Header="Código" Binding="{Binding Codigo}"
                                                     Width="*" ElementStyle="{StaticResource {x:Type TextBlock}}"/>
                             </DataGrid.Columns>
                         </DataGrid>
@@ -270,6 +268,7 @@
                         <TextBox Grid.Row="1" Style="{StaticResource DynamicBodyTextBoxStyle}"
                                  AcceptsReturn="True" TextWrapping="Wrap"
                                  VerticalScrollBarVisibility="Hidden"
+                                 Text="{Binding CuerpoEmailActual, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,20"/>
 
                         <Button Grid.Row="2"

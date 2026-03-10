@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FacturacionMail.Data;
+using System.Linq;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
 using FacturacionMail.Interfaces;
@@ -88,6 +88,20 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
         EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
+    [RelayCommand]
+    private async Task VisualizarFacturaAsync(Factura factura)
+    {
+        if (factura == null) return;
+        try
+        {
+            await _facturaService.VisualizarFacturaAsync(factura.NombreArchivo);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(ex.Message, "Error al abrir factura", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+        }
+    }
+
     public ConsultaFacturasViewModel(IFacturaService facturaService, IEmailService emailService)
     {
         _facturaService = facturaService;
@@ -135,8 +149,14 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
             var facturas = await _facturaService.ObtenerFacturasAsync(
                 MesAnio, ClienteDesde, ClienteHasta, FacturaDesde, FacturaHasta, SoloActuales);
 
-            var dirs = await _emailService.ObtenerDireccionesAsync(
-                ClienteDesde == ClienteHasta && ClienteDesde > 0 ? ClienteDesde : 0);
+            var listaIds = facturas.Select(f => f.ListaId).Distinct();
+            var listaDirs = new List<DireccionEmail>();
+            foreach (var lid in listaIds)
+            {
+                var porLista = await _emailService.ObtenerDireccionesPorListaAsync(lid);
+                listaDirs.AddRange(porLista);
+            }
+            var dirs = listaDirs.GroupBy(d => d.Email).Select(g => g.First()).ToList();
 
             Facturas.Clear();
             foreach (var f in facturas) 

@@ -67,3 +67,28 @@ public class BindingProxy : System.Windows.Freezable
     public static readonly System.Windows.DependencyProperty DataProperty =
         System.Windows.DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new System.Windows.PropertyMetadata(null));
 }
+
+/// <summary>
+/// Convierte entre int y string, manejando valores vacíos como 0.
+/// Evita errores de binding al borrar el contenido de un TextBox numérico.
+/// </summary>
+[ValueConversion(typeof(int), typeof(string))]
+public class NumericStringConverter : IValueConverter
+{
+    public static readonly NumericStringConverter Instance = new();
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is int i) return i == 0 ? string.Empty : i.ToString();
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        string? s = value as string;
+        if (string.IsNullOrWhiteSpace(s)) return 0;
+        if (int.TryParse(s, out int result)) return result;
+        return 0;
+    }
+}
+

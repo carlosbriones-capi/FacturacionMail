@@ -16,8 +16,27 @@ namespace FacturacionMail.Services
         protected DatabaseServiceBase(IConfiguration config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _connectionString = config.GetSection("Database:ConnectionString").Value 
-                                ?? throw new InvalidOperationException("La cadena de conexión (ConnectionString) no está configurada en appsettings.json.");
+            
+            var host = _config["Database:Host"];
+            var db   = _config["Database:Name"];
+            var user = _config["Database:User"];
+            var pass = _config["Database:Pass"];
+            var schema = _config["Database:Schema"];
+
+            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(db) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+            {
+                throw new InvalidOperationException("Faltan parámetros de conexión a la base de datos en FacturacionMail.ini (Host, Name, User, Pass).");
+            }
+
+            var builder = new System.Text.StringBuilder();
+            builder.Append($"Host={host};Database={db};Username={user};Password={pass}");
+            
+            if (!string.IsNullOrEmpty(schema))
+            {
+                builder.Append($";SearchPath={schema}");
+            }
+
+            _connectionString = builder.ToString();
         }
 
         /// <summary>

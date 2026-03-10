@@ -6,7 +6,7 @@ namespace FacturacionMail.Models;
 /// </summary>
 public class ListaEmail
 {
-    public int    Id             { get; set; }
-    public string Nombre         { get; set; } = string.Empty;
-    public int    CodigoCliente  { get; set; }
+    public int Id { get; set; }
+    public string Nombre { get; set; } = string.Empty;
+    public int CodigoCliente { get; set; }
 }
