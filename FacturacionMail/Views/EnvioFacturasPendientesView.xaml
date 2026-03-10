@@ -122,27 +122,8 @@
                 <StackPanel Grid.Column="6" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Style="{StaticResource SecondaryButtonStyle}"
                             Command="{Binding LimpiarCommand}"
-                            Padding="12,6" Margin="0,0,8,0" ToolTip="Limpiar selección">
+                            Padding="12,6" ToolTip="Limpiar selección">
                         <TextBlock Text="↺" FontSize="15" Margin="0" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Style="{StaticResource AccentButtonStyle}"
-                            Command="{Binding EnviarMailCommand}"
-                            Padding="16,8">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="✉" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="Enviar Correo"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Ocupado}" Value="True">
-                                                <Setter Property="Text" Value="Enviando..."/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>

@@ -77,24 +77,6 @@
                              TextAlignment="Center" Width="90"/>
                 </StackPanel>
 
-                <Rectangle Grid.Column="3" Width="1" Height="40" Fill="{StaticResource BorderLightBrush}" HorizontalAlignment="Center"/>
-
-                <!-- Selección (Pill horizontal) -->
-                <StackPanel Grid.Column="4" VerticalAlignment="Center">
-                    <TextBlock Text="SELECCIÓN" FontSize="10" FontWeight="SemiBold"
-                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
-                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="10" Padding="3">
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Content="Marcar Todos"
-                                         Style="{StaticResource ModernPillRadioStyle}"
-                                         IsChecked="{Binding SeleccionarTodo}"
-                                         Margin="0,0,2,0"/>
-                            <RadioButton Content="Desmarcar Todos"
-                                         Style="{StaticResource ModernPillRadioStyle}"
-                                         IsChecked="{Binding SeleccionarTodo, Converter={StaticResource InvertBool}}"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
 
                 <Rectangle Grid.Column="5" Width="1" Height="40" Fill="{StaticResource BorderLightBrush}" HorizontalAlignment="Center"/>
 
@@ -191,7 +173,8 @@
                                   RowHeight="36"
                                   ColumnHeaderHeight="38"
                                   VirtualizingStackPanel.VirtualizationMode="Recycling"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                  IsReadOnly="True">
 
                             <DataGrid.CellStyle>
                                 <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">

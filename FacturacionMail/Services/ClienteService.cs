@@ -94,7 +94,5 @@ public class ClienteService : DatabaseServiceBase, IClienteService
         }
 
         return codigosExcluidos;
-
-        return await Task.FromResult(new List<string>());
     }
 }

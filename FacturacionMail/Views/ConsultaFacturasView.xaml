@@ -129,22 +129,7 @@
                                  TextAlignment="Center" Width="90"/>
                     </StackPanel>
 
-                    <Rectangle Grid.Column="3" Width="1" Height="40" Fill="{StaticResource BorderLightBrush}" Margin="0,0,22,0" VerticalAlignment="Center"/>
 
-                    <StackPanel>
-                        <TextBlock Text="TIPO" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,6"/>
-                        <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="10" Padding="3">
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton Content="Actuales" 
-                                             Style="{StaticResource ModernPillRadioStyle}" 
-                                             IsChecked="{Binding SoloActuales}" 
-                                             Margin="0,0,2,0"/>
-                                <RadioButton Content="Todas" 
-                                             Style="{StaticResource ModernPillRadioStyle}" 
-                                             IsChecked="{Binding SoloActuales, Converter={StaticResource InvertBool}}"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Grid.Column="8" Orientation="Horizontal" VerticalAlignment="Center">

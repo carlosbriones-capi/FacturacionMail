@@ -30,8 +30,6 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
     [ObservableProperty]
     private string _mesAnio = DateTime.Now.ToString("MM-yyyy");
 
-    [ObservableProperty]
-    private bool _soloActuales = true;
 
     // ── Email ────────────────────────────────────────────────────────
 
@@ -140,14 +138,13 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanProcesar))]
     private async Task ProcesarSeleccionAsync()
     {
-        Ocupado = true;
-        MensajeEstado = "Procesando selección...";
+        ShowLoading("Obteniendo facturas y direcciones...", "Procesando Selección");
         ResultadosVisibles = false;
 
         try
         {
             var facturas = await _facturaService.ObtenerFacturasAsync(
-                MesAnio, ClienteDesde, ClienteHasta, FacturaDesde, FacturaHasta, SoloActuales);
+                MesAnio, ClienteDesde, ClienteHasta, FacturaDesde, FacturaHasta, false);
 
             var listaIds = facturas.Select(f => f.ListaId).Distinct();
             var listaDirs = new List<DireccionEmail>();
@@ -184,10 +181,11 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
 
             ResultadosVisibles = true;
             MensajeEstado = $"{Facturas.Count} facturas encontradas · {Direcciones.Count} direcciones de envío";
+            HideModal();
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error: {ex.Message}";
+            ShowError($"Error: {ex.Message}");
         }
         finally
         {
@@ -200,8 +198,7 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanEnviar))]
     private async Task EnviarMailAsync()
     {
-        Ocupado = true;
-        MensajeEstado = "Enviando correo...";
+        ShowLoading("Enviando correos electrónicos...", "Envío en Proceso");
 
         try
         {
@@ -210,11 +207,11 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
 
             await _emailService.EnviarMailAsync(EmailForm.AsuntoEmail, EmailForm.CuerpoEmail, selDirs, selFact);
 
-            MensajeEstado = $"✓ Mail enviado correctamente a {selDirs.Count} dirección(es) con {selFact.Count} factura(s).";
+            ShowSuccess($"Mail enviado correctamente a {selDirs.Count} dirección(es) con {selFact.Count} factura(s).", "¡Envío Exitoso!");
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al enviar: {ex.Message}";
+            ShowError($"Error al enviar: {ex.Message}");
         }
         finally
         {
@@ -232,7 +229,6 @@ public partial class ConsultaFacturasViewModel : ViewModelBase
         FacturaDesde = 0;
         FacturaHasta = 0;
         MesAnio = DateTime.Now.ToString("MM-yyyy");
-        SoloActuales = true;
 
         Facturas.Clear();
         Direcciones.Clear();

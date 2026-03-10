@@ -33,7 +33,7 @@ namespace FacturacionMail.Services
             
             if (!string.IsNullOrEmpty(schema))
             {
-                builder.Append($";SearchPath={schema}");
+                builder.Append($";Search Path={schema}");
             }
 
             _connectionString = builder.ToString();

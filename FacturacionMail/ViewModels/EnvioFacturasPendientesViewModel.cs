@@ -180,7 +180,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar clientes: {ex.Message}";
+            ShowError($"Error al cargar clientes: {ex.Message}");
         }
         finally
         {
@@ -219,7 +219,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar listas: {ex.Message}";
+            ShowError($"Error al cargar listas: {ex.Message}");
         }
         finally
         {
@@ -246,7 +246,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar detalle: {ex.Message}";
+            ShowError($"Error al cargar detalle: {ex.Message}");
         }
         finally
         {
@@ -259,8 +259,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanEnviar))]
     private async Task EnviarMailAsync()
     {
-        Ocupado = true;
-        MensajeEstado = "Enviando correo...";
+        ShowLoading("Enviando correos electrónicos...", "Envío en Proceso");
         try
         {
             var selDirs  = Direcciones.Where(d => d.Seleccionada).ToList();
@@ -268,21 +267,21 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 
             if (!selDirs.Any())
             {
-                MensajeEstado = "Selecciona al menos un destinatario.";
+                ShowError("Casi lo olvidas: debes seleccionar al menos un destinatario.", "Falta Información");
                 return;
             }
             if (!selFact.Any())
             {
-                MensajeEstado = "Selecciona al menos una factura.";
+                ShowError("Casi lo olvidas: debes seleccionar al menos una factura para enviar.", "Falta Información");
                 return;
             }
 
             await _emailService.EnviarMailAsync(EmailForm.AsuntoEmail, EmailForm.CuerpoEmail, selDirs, selFact);
-            MensajeEstado = $"✓ Correo enviado a {selDirs.Count} destinatario(s) con {selFact.Count} factura(s).";
+            ShowSuccess($"Correo enviado a {selDirs.Count} destinatario(s) con {selFact.Count} factura(s).", "¡Envío Exitoso!");
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al enviar: {ex.Message}";
+            ShowError($"Error al enviar: {ex.Message}");
         }
         finally
         {

@@ -33,10 +33,8 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
             anyoMesNumerico = fecha.Year * 10000 + fecha.Month * 100 + 1;
         }
 
-        /*var clientesExcluidos = await _clienteService.ObtenerClientesExcluidosAsync();
-        string cadenaExcluidos = string.Join(",", clientesExcluidos);*/
-
-        var cadenaExcluidos = "NULL";
+        var clientesExcluidos = await _clienteService.ObtenerClientesExcluidosAsync();
+        string cadenaExcluidos = string.Join(",", clientesExcluidos.Select(id => $"'{id}'"));
 
         if (string.IsNullOrEmpty(cadenaExcluidos)) cadenaExcluidos = "NULL";
 
@@ -164,20 +162,25 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
 
         try
         {
-            if (string.IsNullOrEmpty(rutaVisor) || !File.Exists(rutaVisor))
+            if (!string.IsNullOrEmpty(rutaVisor) && File.Exists(rutaVisor))
             {
-                // Abrir con el visor predeterminado si no hay uno específico configurado
-                Process.Start(new ProcessStartInfo(rutaArchivo) { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(rutaVisor, $"\"{rutaArchivo}\"") { UseShellExecute = false });
             }
             else
             {
-                // Abrir con el visor especificado (ej. Adobe Acrobat)
-                Process.Start(rutaVisor, $"\"{rutaArchivo}\"");
+                Process.Start(new ProcessStartInfo(rutaArchivo) { UseShellExecute = true });
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw new Exception($"Error al intentar visualizar el PDF: {ex.Message}", ex);
+            try
+            {
+                Process.Start(new ProcessStartInfo(rutaArchivo) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al intentar visualizar el PDF: {ex.Message}", ex);
+            }
         }
 
         await Task.CompletedTask;

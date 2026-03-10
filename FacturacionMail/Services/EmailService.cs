@@ -109,7 +109,6 @@ public class EmailService : DatabaseServiceBase, IEmailService
 
     public async Task<bool> EnviarMailAsync(string asunto, string cuerpo, IEnumerable<DireccionEmail> destinatarios, IEnumerable<Factura> facturas)
     {
-        // 1. Obtener configuración
         var configuracionEmail = _config.GetSection("EmailSettings");
         var configuracionZip = _config.GetSection("ZipSettings");
         
@@ -121,7 +120,6 @@ public class EmailService : DatabaseServiceBase, IEmailService
             Directory.CreateDirectory(rutaTemporalZip);
         }
 
-        // 2. Calcular tamaño total de los archivos y verificar su existencia
         long totalBytesArchivos = 0;
         var listaRutasArchivos = new List<string>();
         foreach (var factura in facturas)
@@ -154,8 +152,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
                     }
                 }
                 rutaAdjuntosFinales = rutaCompletaZip;
-                contadorFicheros = 1; // El adjunto pasa a ser un único archivo .zip
-                Console.WriteLine($"[MAIL] Archivos comprimidos por tamaño en: {rutaCompletaZip} (Tamaño: {tamanoTotalMB:F2}MB)");
+                contadorFicheros = 1;
             }
             catch (Exception ex)
             {
@@ -163,16 +160,16 @@ public class EmailService : DatabaseServiceBase, IEmailService
             }
         }
 
-        // 3. Registro en base de datos para procesamiento por el servicio de correo
         string nombreTabla = GetTableName("EnviosHistoricos");
         string sql = $@"INSERT INTO {nombreTabla} 
-            (MAIL_ID, MAIL_FECHA, MAIL_HORAINI, MAIL_HORAFIN, MAIL_CLIENTE, MAIL_TIPO, MAIL_MSG, 
-             MAIL_ASUNTO, MAIL_BODY, MAIL_ESTADO, MAIL_DIRECCIONES, MAIL_ADJUNTOS, MAIL_INTENTOS, 
-             MAIL_TOTALFICHEROS, MAIL_OBSERVACIONES, MAIL_PRIORIDAD, MAIL_APLICACION, MAIL_OPERACION) 
+            (mail_id, mail_fecha, mail_horaini, mail_horafin, mail_cliente, mail_tipo, mail_msg, 
+             mail_asunto, mail_body, mail_estado, mail_direcciones, mail_adjuntos, mail_intentos, 
+             mail_totalficheros, mail_observaciones, mail_prioridad, mail_aplicacion, mail_operacion,
+             mail_coculta, mail_ccopia) 
             VALUES 
             (0, @fecha, @hora, 0, @cliente, 1, @msg, 
              @asunto, @body, 0, @direcciones, @adjuntos, 0, 
-             0, '', 3, 'FACTURACION', '0')";
+             @total, '', 3, 'FACTURACION', '0', '', '')";
 
         try
         {
@@ -181,43 +178,51 @@ public class EmailService : DatabaseServiceBase, IEmailService
             await using var command = new NpgsqlCommand(sql, conexion);
             
             command.Parameters.AddWithValue("fecha", decimal.Parse(DateTime.Now.ToString("yyyyMMdd")));
-            command.Parameters.AddWithValue("hora", DateTime.Now.ToString("HHmmss"));
+            command.Parameters.AddWithValue("hora", decimal.Parse(DateTime.Now.ToString("HHmmss")));
             command.Parameters.AddWithValue("cliente", Environment.MachineName);
             command.Parameters.AddWithValue("msg", (decimal)destinatarios.Count());
             command.Parameters.AddWithValue("asunto", asunto);
             command.Parameters.AddWithValue("body", cuerpo);
             command.Parameters.AddWithValue("direcciones", string.Join(";", destinatarios.Select(d => d.Email)));
             command.Parameters.AddWithValue("adjuntos", rutaAdjuntosFinales);
+            command.Parameters.AddWithValue("total", (decimal)contadorFicheros);
 
             await command.ExecuteNonQueryAsync();
             _logger.ToLog($"[MAIL] Registro de envío insertado en {nombreTabla} para {destinatarios.Count()} destinatario(s).");
         }
         catch (Exception ex)
         {
-            //_logger.LogErr("Error al registrar el envío en la base de datos", ex);
             throw new Exception($"Error al registrar el envío: {ex.Message}", ex);
         }
         
         return true;
     }
 
-    public async Task<IEnumerable<EstadoEnvioMail>> ObtenerEstadoEnviosAsync()
+    public async Task<(IEnumerable<EstadoEnvioMail> items, int total)> ObtenerEstadoEnviosAsync(int limit, int offset)
     {
         var listaEstados = new List<EstadoEnvioMail>();
         string nombreTabla = GetTableName("EnviosHistoricos");
-        string query = $"select mail_id,mail_msg,mail_fecha, Mail_horaini, mail_horafin,mail_cliente,mail_tipo, mail_asunto,mail_totalficheros,mail_estado from {nombreTabla} where mail_fecha = @fecha and mail_aplicacion = 'FACTURACION' and mail_cliente = @PCName order by mail_msg, mail_id";
+        
+        string countQuery = $"SELECT COUNT(*) FROM {nombreTabla} WHERE mail_aplicacion = 'FACTURACION'";
+        string query = $"SELECT mail_id, mail_msg, mail_fecha, mail_horaini, mail_horafin, mail_cliente, mail_tipo, mail_asunto, mail_totalficheros, mail_estado " +
+                       $"FROM {nombreTabla} WHERE mail_aplicacion = 'FACTURACION' " +
+                       $"ORDER BY mail_id DESC LIMIT @limit OFFSET @offset";
+
+        int totalDocs = 0;
 
         try
         {
-            decimal fechaHoy = decimal.Parse(DateTime.Now.ToString("yyyyMMdd"));
-            string nombrePC = Environment.MachineName;
-
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
 
+            await using (var cmdCount = new NpgsqlCommand(countQuery, conexion))
+            {
+                totalDocs = Convert.ToInt32(await cmdCount.ExecuteScalarAsync());
+            }
+
             await using var command = new NpgsqlCommand(query, conexion);
-            command.Parameters.AddWithValue("fecha", fechaHoy);
-            command.Parameters.AddWithValue("PCName", nombrePC);
+            command.Parameters.AddWithValue("limit", limit);
+            command.Parameters.AddWithValue("offset", offset);
 
             await using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -226,16 +231,24 @@ public class EmailService : DatabaseServiceBase, IEmailService
                 {
                     Orden = int.TryParse(reader.GetValue(0)?.ToString(), out int id) ? id : 0,
                     Envios = int.TryParse(reader.GetValue(1)?.ToString(), out int msg) ? msg : 0,
-                    HoraIni = reader.GetValue(3)?.ToString() ?? string.Empty,
-                    HoraFin = reader.GetValue(4)?.ToString() ?? string.Empty,
-                    CodigoCliente = int.TryParse(reader.GetValue(5)?.ToString(), out int cli) ? cli : 0,
+                    NombrePC = reader.GetValue(5)?.ToString() ?? string.Empty,
                     Tipo = reader.GetValue(6)?.ToString() ?? string.Empty,
                     Asunto = reader.GetValue(7)?.ToString() ?? string.Empty,
-                    Adjuntos = int.TryParse(reader.GetValue(8)?.ToString(), out int adj) ? adj : 0,
-                    Estado = reader.GetValue(9)?.ToString() ?? string.Empty
+                    Adjuntos = int.TryParse(reader.GetValue(8)?.ToString(), out int adj) ? adj : 0
                 };
 
-                // Convertir decimal yyyyMMdd a DateTime
+                estado.HoraIni = FormatearHora(reader.GetValue(3)?.ToString());
+                estado.HoraFin = FormatearHora(reader.GetValue(4)?.ToString());
+
+                string valEstado = reader.GetValue(9)?.ToString() ?? "0";
+                estado.Estado = valEstado switch
+                {
+                    "0" => "Pendiente",
+                    "1" => "Enviado",
+                    "2" => "Error",
+                    _ => valEstado
+                };
+
                 if (decimal.TryParse(reader.GetValue(2)?.ToString(), out decimal f))
                 {
                     string fs = f.ToString();
@@ -253,6 +266,14 @@ public class EmailService : DatabaseServiceBase, IEmailService
             throw new Exception($"Error al obtener estados de envío: {ex.Message}", ex);
         }
 
-        return listaEstados;
+        return (listaEstados, totalDocs);
+    }
+
+    private string FormatearHora(string? hhmmss)
+    {
+        if (string.IsNullOrEmpty(hhmmss) || hhmmss == "0") return "";
+        string h = hhmmss.PadLeft(6, '0');
+        if (h.Length != 6) return hhmmss;
+        return $"{h.Substring(0, 2)}:{h.Substring(2, 2)}:{h.Substring(4, 2)}";
     }
 }
