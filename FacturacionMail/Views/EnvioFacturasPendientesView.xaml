@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:FacturacionMail.ViewModels"
              xmlns:views="clr-namespace:FacturacionMail.Views"
+             xmlns:local="clr-namespace:FacturacionMail"
              mc:Ignorable="d"
              d:DesignHeight="750" d:DesignWidth="1150"
              Background="{StaticResource AppBackgroundBrush}"
@@ -14,9 +15,9 @@
              UseLayoutRounding="True"
              SnapsToDevicePixels="True">
 
-    <UserControl.DataContext>
-        <vm:EnvioFacturasPendientesViewModel/>
-    </UserControl.DataContext>
+    <UserControl.Resources>
+        <local:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -54,9 +55,9 @@
                 <!-- Título -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                        <TextBlock Text="📨" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="⏳" FontSize="14" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,6,0" VerticalAlignment="Center"/>
                         <TextBlock Text="Envío de Facturas Pendientes"
-                                   FontFamily="Segoe UI" FontSize="15"
+                                   FontFamily="{StaticResource HeaderFontFamily}" FontSize="15"
                                    FontWeight="SemiBold"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
@@ -72,17 +73,19 @@
                     <ComboBox Style="{StaticResource ModernComboBoxStyle}"
                               Width="240"
                               IsEditable="True"
+                              StaysOpenOnEdit="True"
+                              IsTextSearchEnabled="False"
                               TextSearch.TextPath="Codigo"
-                              ItemsSource="{Binding Clientes}"
+                              Text="{Binding FiltroTexto, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding ClientesView}"
                               SelectedItem="{Binding ClienteSeleccionado, Mode=TwoWay}"
+                              IsDropDownOpen="{Binding IsFiltroAbierto, Mode=TwoWay}"
                               IsEnabled="{Binding Ocupado, Converter={StaticResource InvertBool}}">
                         <ComboBox.ItemTemplate>
 
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Codigo}" Foreground="{StaticResource TextMutedBrush}"
-                                               FontSize="11" Width="36" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Nombre}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Codigo}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -108,7 +111,7 @@
                 <!-- Mensaje de estado (inline) -->
                 <TextBlock Grid.Column="5"
                            Text="{Binding MensajeEstado}"
-                           FontFamily="Segoe UI" FontSize="12"
+                           FontFamily="{StaticResource MainFontFamily}" FontSize="12"
                            Foreground="{StaticResource TextMutedBrush}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
@@ -119,27 +122,8 @@
                 <StackPanel Grid.Column="6" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Style="{StaticResource SecondaryButtonStyle}"
                             Command="{Binding LimpiarCommand}"
-                            Padding="12,6" Margin="0,0,8,0" ToolTip="Limpiar selección">
+                            Padding="12,6" ToolTip="Limpiar selección">
                         <TextBlock Text="↺" FontSize="15" Margin="0" VerticalAlignment="Center"/>
-                    </Button>
-                    <Button Style="{StaticResource AccentButtonStyle}"
-                            Command="{Binding EnviarMailCommand}"
-                            Padding="16,8">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="✉" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="Enviar Correo"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Ocupado}" Value="True">
-                                                <Setter Property="Text" Value="Enviando..."/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -153,21 +137,21 @@
                         Visibility="{Binding DetalleVisible, Converter={StaticResource InvertBoolToVisibility}}">
                 <TextBlock Text="🏢" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                 <TextBlock Text="Selecciona un cliente"
-                           FontFamily="Segoe UI" FontSize="16"
+                           FontFamily="{StaticResource MainFontFamily}" FontSize="16"
                            Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center"/>
                 <TextBlock Text="y elige una lista de envío"
-                           FontFamily="Segoe UI" FontSize="18" FontWeight="SemiBold"
+                           FontFamily="{StaticResource HeaderFontFamily}" FontSize="18" FontWeight="SemiBold"
                            Foreground="{StaticResource PrimaryBrush}"
                            HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 <TextBlock Text="para ver los destinatarios y las facturas pendientes."
-                           FontFamily="Segoe UI" FontSize="14"
+                           FontFamily="{StaticResource MainFontFamily}" FontSize="14"
                            Foreground="{StaticResource TextMutedBrush}"
                            HorizontalAlignment="Center" Margin="0,8,0,0"/>
             </StackPanel>
 
             <!-- Panel de resultados — dos columnas -->
-            <Grid Margin="24,16,24,20"
+            <Grid Margin="24,4,24,20"
                   Visibility="{Binding DetalleVisible, Converter={StaticResource BoolToVisibility}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -180,7 +164,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- ── Columna izquierda: Destinatarios ── -->
-<ContentControl Grid.Row="0" Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20">
+                <ContentControl Grid.Row="0" Grid.Column="0" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -208,7 +192,7 @@
                                        Foreground="{StaticResource PrimaryBrush}"
                                        Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="1" Text="Nuevo Mensaje"
-                                       FontFamily="Segoe UI" FontSize="16" FontWeight="SemiBold"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
                         </Grid>
@@ -223,7 +207,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="📋" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding ListaSeleccionada.Nombre}"
-                                    FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                    FontFamily="{StaticResource HeaderFontFamily}" FontSize="13" FontWeight="SemiBold"
                                     Foreground="{StaticResource PrimaryDarkBrush}"
                                     VerticalAlignment="Center"/>
                                 <Border Background="{StaticResource PrimaryLightBrush}"
@@ -243,8 +227,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0"
                                      Style="{StaticResource ModernTextBoxStyle}"
-                                     Background="{StaticResource SurfaceAltBrush}"
-                                     Text="{Binding NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
+                                     Text="{Binding EmailForm.NuevaDireccion, UpdateSourceTrigger=PropertyChanged}"
                                      Padding="9,6" FontSize="13"/>
                             <Button Grid.Column="2"
                                     Content="+"
@@ -252,7 +235,7 @@
                                     Height="38" Width="42"
                                     FontSize="20" FontWeight="Bold"
                                     Padding="0,0,0,2"
-                                    Command="{Binding InsertarDireccionCommand}"
+                                    Command="{Binding EmailForm.InsertarDireccionCommand}"
                                     ToolTip="Añadir manual"/>
                         </Grid>
 
@@ -276,11 +259,10 @@
                                 </Style>
                             </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="55" CanUserSort="False">
+                                <DataGridTemplateColumn Width="55" CanUserSort="False" HeaderStyle="{StaticResource ModernCheckBoxColumnHeaderStyle}">
                                     <DataGridTemplateColumn.Header>
                                         <CheckBox HorizontalAlignment="Center" ToolTip="Seleccionar todos"
-                                                  IsChecked="{Binding DataContext.SeleccionarTodasDirecciones,
-                                                      RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                  IsChecked="{Binding Data.SeleccionarTodasDirecciones, Source={StaticResource Proxy}}"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -298,15 +280,14 @@
                         <TextBlock Grid.Row="6" Text="Asunto" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                         <TextBox Grid.Row="7"
                                  Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding EmailForm.AsuntoEmail, UpdateSourceTrigger=PropertyChanged}"
                                  FontSize="13" Padding="9,6"
-                                 Background="{StaticResource SurfaceAltBrush}"
                                  Margin="0,0,0,16"/>
 
                         <TextBlock Grid.Row="8" Text="Mensaje" Style="{StaticResource FormLabelStyle}" Margin="0,0,0,4"/>
                         <TextBox Grid.Row="9"
                                  Style="{StaticResource ModernTextAreaStyle}"
-                                 Text="{Binding CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 Text="{Binding EmailForm.CuerpoEmail, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,16"/>
 
                         <Button Grid.Row="10"
@@ -333,7 +314,7 @@
                 </ContentControl>
 
                 <!-- ── Columna derecha: Facturas pendientes ── -->
-                <ContentControl Grid.Row="0" Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20">
+                <ContentControl Grid.Row="0" Grid.Column="2" Style="{StaticResource CardStyle}" Padding="20" VerticalAlignment="Top">
                     <DockPanel>
                         <!-- Header facturas -->
                         <Grid DockPanel.Dock="Top" Margin="0,0,0,14">
@@ -347,7 +328,7 @@
                                        Foreground="{StaticResource PrimaryBrush}"
                                        Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="1" Text="Facturas Pendientes"
-                                       FontFamily="Segoe UI" FontSize="16" FontWeight="SemiBold"
+                                       FontFamily="{StaticResource HeaderFontFamily}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{StaticResource TextPrimaryBrush}"
                                        VerticalAlignment="Center"/>
                             <Border Grid.Column="2" Background="{StaticResource PrimaryLightBrush}"
@@ -365,16 +346,10 @@
                                 Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="🏢" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                <TextBlock FontFamily="{StaticResource HeaderFontFamily}" FontSize="13" FontWeight="SemiBold"
                                            Foreground="{StaticResource PrimaryDarkBrush}"
-                                           VerticalAlignment="Center">
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} — {1}">
-                                            <Binding Path="ClienteSeleccionado.Codigo"/>
-                                            <Binding Path="ClienteSeleccionado.Nombre"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
+                                           VerticalAlignment="Center"
+                                           Text="{Binding ClienteSeleccionado.Codigo, StringFormat='{}Cliente: {0}'}"/>
                             </StackPanel>
                         </Border>
 
@@ -387,6 +362,7 @@
                                   RowHeight="36"
                                   ColumnHeaderHeight="38"
                                   GridLinesVisibility="None"
+                                  MaxHeight="550"
                                   ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <DataGrid.CellStyle>
                                 <Style TargetType="DataGridCell" BasedOn="{StaticResource ModernDataGridCellStyle}">
@@ -395,11 +371,10 @@
                                 </Style>
                             </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="55" CanUserSort="False">
+                                <DataGridTemplateColumn Width="55" CanUserSort="False" HeaderStyle="{StaticResource ModernCheckBoxColumnHeaderStyle}">
                                     <DataGridTemplateColumn.Header>
                                         <CheckBox HorizontalAlignment="Center" ToolTip="Seleccionar todas"
-                                                  IsChecked="{Binding DataContext.SeleccionarTodasFacturas,
-                                                          RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                                  IsChecked="{Binding Data.SeleccionarTodasFacturas, Source={StaticResource Proxy}}"/>
                                     </DataGridTemplateColumn.Header>
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -408,7 +383,21 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Archivo"     Binding="{Binding NombreArchivo}"   Width="*"/>
+                                <DataGridTextColumn Header="Nº Factura"  Binding="{Binding NumeroFactura}"   Width="*"/>
+                                <DataGridTemplateColumn Header="Ver" Width="60" CanUserSort="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource BorderlessButtonStyle}"
+                                                    Command="{Binding DataContext.VisualizarFacturaCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    ToolTip="Ver PDF"
+                                                    Padding="2"
+                                                    HorizontalAlignment="Center">
+                                                <TextBlock Text="&#xE890;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{StaticResource PrimaryBrush}"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </DockPanel>

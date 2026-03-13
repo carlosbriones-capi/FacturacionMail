@@ -9,7 +9,7 @@ public partial class EstadoEnvioMail : ObservableObject
     public DateTime Fecha { get; set; }
     public string HoraIni { get; set; } = string.Empty;
     public string HoraFin { get; set; } = string.Empty;
-    public string Cliente { get; set; } = string.Empty;
+    public string NombrePC { get; set; } = string.Empty;
     public string Tipo { get; set; } = string.Empty;
     public string Asunto { get; set; } = string.Empty;
     public int Adjuntos { get; set; }

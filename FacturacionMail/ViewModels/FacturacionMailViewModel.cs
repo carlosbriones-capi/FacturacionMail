@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
@@ -5,14 +6,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
-using FacturacionMail.Data;
+using FacturacionMail.Interfaces;
 
 namespace FacturacionMail.ViewModels;
 
-public partial class FacturacionMailViewModel : ObservableObject
+public partial class FacturacionMailViewModel : ViewModelBase
 {
+    private readonly IClienteService _clienteService;
     private readonly IFacturaService _facturaService;
     private readonly IEmailService _emailService;
+    private readonly IAppLogger _logger;
 
     [ObservableProperty]
     private string _asuntoEmail = "Facturacion CM.Capital Markets mar-2026";
@@ -36,26 +39,30 @@ public partial class FacturacionMailViewModel : ObservableObject
     private bool _isDetailedMode;
 
     [ObservableProperty]
-    private string _mensajeEstado = string.Empty;
-
-    [ObservableProperty]
-    private bool _ocupado;
-
-    [ObservableProperty]
     private string _searchTerm = string.Empty;
 
-    [ObservableProperty]
-    private bool _seleccionarTodo = true;
 
-    public ObservableCollection<ClienteSeleccionable> Clientes { get; } = new();
+    public string CuerpoEmailActual
+    {
+        get => IsDetailedMode ? CuerpoEmailDetallado : CuerpoEmailMensual;
+        set
+        {
+            if (IsDetailedMode) CuerpoEmailDetallado = value;
+            else CuerpoEmailMensual = value;
+            OnPropertyChanged(nameof(CuerpoEmailActual));
+        }
+    }
+
+    public ObservableCollection<Cliente> Clientes { get; } = new();
     
     public ICollectionView ClientesView { get; }
 
-    public FacturacionMailViewModel()
+    public FacturacionMailViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService, IAppLogger logger)
     {
-        // En un entorno real esto se inyectaría
-        _facturaService = new MockDataService();
-        _emailService = (IEmailService)_facturaService;
+        _clienteService = clienteService;
+        _facturaService = facturaService;
+        _emailService = emailService;
+        _logger = logger;
 
         ClientesView = CollectionViewSource.GetDefaultView(Clientes);
         ClientesView.Filter = FiltrarCliente;
@@ -68,19 +75,13 @@ public partial class FacturacionMailViewModel : ObservableObject
         ClientesView.Refresh();
     }
 
-    partial void OnSeleccionarTodoChanged(bool value)
-    {
-        if (value) MarcarTodos();
-        else DesmarcarTodos();
-    }
 
     private bool FiltrarCliente(object obj)
     {
-        if (obj is ClienteSeleccionable cs)
+        if (obj is Cliente c)
         {
             if (string.IsNullOrWhiteSpace(SearchTerm)) return true;
-            return cs.Cliente.Codigo.ToString().Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                   cs.Cliente.Nombre.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase);
+            return c.Codigo.ToString().Contains(SearchTerm, StringComparison.OrdinalIgnoreCase);
         }
         return false;
     }
@@ -91,17 +92,24 @@ public partial class FacturacionMailViewModel : ObservableObject
         Ocupado = true;
         try
         {
-            var clientes = await _facturaService.ObtenerClientesAsync();
+            var clientes = await _clienteService.ObtenerClientesAsync();
+            var excluidos = await _clienteService.ObtenerClientesExcluidosAsync();
+            var setExcluidos = new HashSet<string>(excluidos);
+
             Clientes.Clear();
-            foreach (var c in clientes)
+            // Mostrar solo clientes únicos (por Codigo) y NO excluidos para el combo
+            foreach (var c in clientes.DistinctBy(c => c.Codigo))
             {
-                // En modo mensual (no detallado) seleccionamos por defecto
-                Clientes.Add(new ClienteSeleccionable(c, !IsDetailedMode));
+                if (!setExcluidos.Contains(c.Codigo.ToString()))
+                {
+                    c.IsSelected = !IsDetailedMode;
+                    Clientes.Add(c);
+                }
             }
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar clientes: {ex.Message}";
+            ShowError($"Error al cargar clientes: {ex.Message}");
         }
         finally
         {
@@ -109,22 +117,11 @@ public partial class FacturacionMailViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    private void MarcarTodos()
-    {
-        foreach (ClienteSeleccionable c in ClientesView) c.IsSelected = true;
-    }
-
-    [RelayCommand]
-    private void DesmarcarTodos()
-    {
-        foreach (ClienteSeleccionable c in ClientesView) c.IsSelected = false;
-    }
 
     [RelayCommand]
     private void InicializaCriterios()
     {
-        DesmarcarTodos();
+        foreach (Cliente c in Clientes) c.IsSelected = false;
         AsuntoEmail = "Facturacion CM.Capital Markets";
         CuerpoEmailMensual = "CM Capital Markets...";
         CuerpoEmailDetallado = "CM Capital Markets...";
@@ -136,23 +133,42 @@ public partial class FacturacionMailViewModel : ObservableObject
         var seleccionados = Clientes.Where(c => c.IsSelected).ToList();
         if (!seleccionados.Any())
         {
-            MensajeEstado = "Debes seleccionar al menos un cliente.";
+            ShowError("Casi lo olvidas: debes seleccionar al menos un cliente para poder enviar las facturas.", "Falta Selección");
             return;
         }
 
-        Ocupado = true;
-        MensajeEstado = "Enviando correos...";
+        ShowLoading("Registrando envíos...", "Enviando Correo(s)");
         
         try
         {
-            // Simulación de envío a cada cliente seleccionado
-            // En una implementación real, esto podría requerir obtener facturas para cada uno.
-            await Task.Delay(1000); 
-            MensajeEstado = $"✓ Envío completado para {seleccionados.Count} clientes.";
+            _logger.ToLog($"[USER ACTION] Inicio de proceso de envío masivo para {seleccionados.Count} clientes.");
+            int enviosRealizados = 0;
+            foreach (var cliente in seleccionados)
+            {
+                var facturas = await _facturaService.ObtenerFacturasAsync(MesAnio, cliente.Codigo, cliente.Codigo, 0, 0, true);
+                var listaFacturas = facturas.ToList();
+
+                if (!listaFacturas.Any()) continue;
+
+                var grupos = listaFacturas.GroupBy(f => f.ListaId);
+                foreach (var grupo in grupos)
+                {
+                    var direcciones = await _emailService.ObtenerDireccionesPorListaAsync(grupo.Key);
+                    var listaDirecciones = direcciones.ToList();
+
+                    if (listaDirecciones.Any())
+                    {
+                        await _emailService.EnviarMailAsync(AsuntoEmail, CuerpoEmailActual, listaDirecciones, grupo);
+                        enviosRealizados++;
+                    }
+                }
+            }
+            
+            ShowSuccess($"Se han registrado {enviosRealizados} órdenes de envío en el historial.", "Envío Finalizado");
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error en el envío: {ex.Message}";
+            ShowError($"Error en el envío: {ex.Message}");
         }
         finally
         {
@@ -167,5 +183,6 @@ public partial class FacturacionMailViewModel : ObservableObject
         {
             c.IsSelected = !value;
         }
+        OnPropertyChanged(nameof(CuerpoEmailActual));
     }
 }

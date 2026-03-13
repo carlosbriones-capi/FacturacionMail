@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="FacturacionMail.Tests/FacturacionMail.Tests.csproj" />
   <Project Path="FacturacionMail/FacturacionMail.csproj" />
+  <Project Path="H:/proyectos/Carlos/Captura Meff Ficheros/ProjAux/CapiUtils/CapiUtils.csproj" />
 </Solution>

@@ -1,23 +1,28 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FacturacionMail.Data;
 using FacturacionMail.Models;
 using FacturacionMail.Services;
+using FacturacionMail.Interfaces;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace FacturacionMail.ViewModels;
 
-public partial class EnvioFacturasPendientesViewModel : ObservableObject
+public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 {
+    private readonly IClienteService _clienteService;
     private readonly IFacturaService _facturaService;
     private readonly IEmailService   _emailService;
+    private readonly IAppLogger      _logger;
 
     // ── Colecciones ───────────────────────────────────────────────────
 
-    public ObservableCollection<Cliente>       Clientes   { get; } = [];
-    public ObservableCollection<ListaEmail>    Listas     { get; } = [];
+    public ObservableCollection<Cliente> Clientes { get; } = [];
+    public ICollectionView ClientesView { get; }
+    public ObservableCollection<ListaEmail> Listas { get; } = [];
     public ObservableCollection<DireccionEmail> Direcciones { get; } = [];
-    public ObservableCollection<Factura>       Facturas   { get; } = [];
+    public ObservableCollection<Factura> Facturas { get; } = [];
 
     // ── Selección ─────────────────────────────────────────────────────
 
@@ -38,18 +43,65 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     private bool _detalleVisible = false;
 
     [ObservableProperty]
-    private bool _ocupado = false;
+    private bool _seleccionarTodasDirecciones = true;
 
     [ObservableProperty]
-    private string _mensajeEstado = string.Empty;
+    private bool _seleccionarTodasFacturas = true;
 
     [ObservableProperty]
-    private bool _seleccionarTodasDirecciones = false;
+    private string _filtroTexto = string.Empty;
 
     [ObservableProperty]
-    private bool _seleccionarTodasFacturas = false;
+    private bool _isFiltroAbierto = false;
 
     private bool _isUpdatingSelection = false;
+
+    // ── Email ─────────────────────────────────────────────────────────
+
+    public EmailFormViewModel EmailForm { get; }
+
+    // ── Constructor ───────────────────────────────────────────────────
+
+    public EnvioFacturasPendientesViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService, IAppLogger logger)
+    {
+        _clienteService = clienteService;
+        _facturaService = facturaService;
+        _emailService   = emailService;
+        _logger         = logger;
+
+        EmailForm = new EmailFormViewModel(
+            "Facturas pendientes — CM Capital Markets",
+            "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es",
+            OnInsertarDireccion);
+
+        // Configurar la vista filtrada
+        ClientesView = CollectionViewSource.GetDefaultView(Clientes);
+        ClientesView.Filter = (obj) =>
+        {
+            if (string.IsNullOrWhiteSpace(FiltroTexto)) return true;
+            if (obj is not Cliente c) return false;
+
+            // Filtrar por código (comienzo del string) o nombre (contiene)
+            string search = FiltroTexto.ToLower();
+            return c.Codigo.ToString().Contains(search);
+        };
+
+        _ = CargarClientesAsync();
+    }
+
+    protected override void OnOcupadoChangedVirtual(bool value)
+    {
+        EnviarMailCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnFiltroTextoChanged(string value)
+    {
+        ClientesView.Refresh();
+        if (!string.IsNullOrEmpty(value))
+        {
+            IsFiltroAbierto = true;
+        }
+    }
 
     partial void OnSeleccionarTodasDireccionesChanged(bool value)
     {
@@ -69,28 +121,17 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
-
-    // ── Email ─────────────────────────────────────────────────────────
-
-    [ObservableProperty]
-    private string _asuntoEmail = "Facturas pendientes — CM Capital Markets";
-
-    [ObservableProperty]
-    private string _cuerpoEmail =
-        "CM Capital Markets\nOchandiano, 2\n28023 Madrid\nTelf: +34 91 509 62 61\nE-mail: facturas@capi.es";
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(InsertarDireccionCommand))]
-    private string _nuevaDireccion = string.Empty;
-
-    // ── Constructor ───────────────────────────────────────────────────
-
-    public EnvioFacturasPendientesViewModel()
+    private void OnInsertarDireccion(string direccion)
     {
-        _facturaService = new MockDataService();
-        _emailService   = (IEmailService)_facturaService;
-
-        _ = CargarClientesAsync();
+        Direcciones.Add(new DireccionEmail
+        {
+            Id = Direcciones.Count + 1000,
+            Email = direccion,
+            Nombre = "Manual",
+            Seleccionada = true,
+            CodigoCliente = ClienteSeleccionado?.Codigo ?? 0
+        });
+        EnviarMailCommand.NotifyCanExecuteChanged();
     }
 
     // ── Reactive handlers ─────────────────────────────────────────────
@@ -127,19 +168,39 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         Ocupado = true;
         try
         {
-            var clientes = await _facturaService.ObtenerClientesAsync();
+            var clientes = await _clienteService.ObtenerClientesAsync();
+            var excluidos = await _clienteService.ObtenerClientesExcluidosAsync();
+            var setExcluidos = new HashSet<string>(excluidos);
+
             Clientes.Clear();
-            // Mostrar solo clientes únicos (por Codigo) para el combo
+            // Mostrar solo clientes únicos (por Codigo) y NO excluidos para el combo
             foreach (var c in clientes.DistinctBy(c => c.Codigo))
-                Clientes.Add(c);
+            {
+                if (!setExcluidos.Contains(c.Codigo.ToString()))
+                    Clientes.Add(c);
+            }
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar clientes: {ex.Message}";
+            ShowError($"Error al cargar clientes: {ex.Message}");
         }
         finally
         {
             Ocupado = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task VisualizarFacturaAsync(Factura factura)
+    {
+        if (factura == null) return;
+        try
+        {
+            await _facturaService.VisualizarFacturaAsync(factura.NombreArchivo);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(ex.Message, "Error al abrir factura", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
     }
 
@@ -160,7 +221,7 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar listas: {ex.Message}";
+            ShowError($"Error al cargar listas: {ex.Message}");
         }
         finally
         {
@@ -174,10 +235,7 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         try
         {
             var dirs     = await _emailService.ObtenerDireccionesPorListaAsync(listaId);
-            var facturas = await _facturaService.ObtenerFacturasAsync(
-                DateTime.Now.ToString("MM-yyyy"),
-                ClienteSeleccionado!.Codigo, ClienteSeleccionado.Codigo,
-                0, 0, true);
+            var facturas = await _facturaService.ObtenerFacturasPendientesPorListaAsync(listaId);
 
             Direcciones.Clear();
             foreach (var d in dirs) Direcciones.Add(d);
@@ -190,7 +248,7 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al cargar detalle: {ex.Message}";
+            ShowError($"Error al cargar detalle: {ex.Message}");
         }
         finally
         {
@@ -203,30 +261,31 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanEnviar))]
     private async Task EnviarMailAsync()
     {
-        Ocupado = true;
-        MensajeEstado = "Enviando correo...";
+        ShowLoading("Enviando correos electrónicos...", "Envío en Proceso");
         try
         {
             var selDirs  = Direcciones.Where(d => d.Seleccionada).ToList();
             var selFact  = Facturas.Where(f => f.Seleccionada).ToList();
 
+            _logger.ToLog($"[USER ACTION] Inicio de envío individual para cliente {ClienteSeleccionado?.Codigo} ({selDirs.Count} destinatarios, {selFact.Count} facturas).");
+
             if (!selDirs.Any())
             {
-                MensajeEstado = "Selecciona al menos un destinatario.";
+                ShowError("Casi lo olvidas: debes seleccionar al menos un destinatario.", "Falta Información");
                 return;
             }
             if (!selFact.Any())
             {
-                MensajeEstado = "Selecciona al menos una factura.";
+                ShowError("Casi lo olvidas: debes seleccionar al menos una factura para enviar.", "Falta Información");
                 return;
             }
 
-            await _emailService.EnviarMailAsync(AsuntoEmail, CuerpoEmail, selDirs, selFact);
-            MensajeEstado = $"✓ Correo enviado a {selDirs.Count} destinatario(s) con {selFact.Count} factura(s).";
+            await _emailService.EnviarMailAsync(EmailForm.AsuntoEmail, EmailForm.CuerpoEmail, selDirs, selFact);
+            ShowSuccess($"Correo enviado a {selDirs.Count} destinatario(s) con {selFact.Count} factura(s).", "¡Envío Exitoso!");
         }
         catch (Exception ex)
         {
-            MensajeEstado = $"Error al enviar: {ex.Message}";
+            ShowError($"Error al enviar: {ex.Message}");
         }
         finally
         {
@@ -238,23 +297,6 @@ public partial class EnvioFacturasPendientesViewModel : ObservableObject
         !Ocupado && DetalleVisible &&
         ClienteSeleccionado is not null &&
         Direcciones.Any(d => d.Seleccionada);
-
-    [RelayCommand(CanExecute = nameof(CanInsertarDireccion))]
-    private void InsertarDireccion()
-    {
-        Direcciones.Add(new DireccionEmail
-        {
-            Id = Direcciones.Count + 1000,
-            Email = NuevaDireccion.Trim(),
-            Nombre = "Manual",
-            Seleccionada = true,
-            CodigoCliente = ClienteSeleccionado?.Codigo ?? 0
-        });
-        NuevaDireccion = string.Empty;
-        EnviarMailCommand.NotifyCanExecuteChanged();
-    }
-
-    private bool CanInsertarDireccion() => !string.IsNullOrWhiteSpace(NuevaDireccion);
 
     [RelayCommand]
     private void EliminarDireccion(DireccionEmail? dir)
