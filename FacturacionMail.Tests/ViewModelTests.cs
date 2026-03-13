@@ -17,6 +17,7 @@ namespace FacturacionMail.Tests
             var mockClienteService = new Mock<IClienteService>();
             var mockFacturaService = new Mock<IFacturaService>();
             var mockEmailService = new Mock<IEmailService>();
+            var mockCapiLoggerAdapter = new Mock<IAppLogger>();
 
             var clientes = new List<Cliente>
             {
@@ -30,7 +31,7 @@ namespace FacturacionMail.Tests
             mockClienteService.Setup(s => s.ObtenerClientesAsync()).ReturnsAsync(clientes);
             mockClienteService.Setup(s => s.ObtenerClientesExcluidosAsync()).ReturnsAsync(excluidos);
 
-            var viewModel = new FacturacionMailViewModel(mockClienteService.Object, mockFacturaService.Object, mockEmailService.Object);
+            var viewModel = new FacturacionMailViewModel(mockClienteService.Object, mockFacturaService.Object, mockEmailService.Object, mockCapiLoggerAdapter.Object);
 
             await viewModel.CargarClientesCommand.ExecuteAsync(null);
 
@@ -47,6 +48,7 @@ namespace FacturacionMail.Tests
             var mockClienteService = new Mock<IClienteService>();
             var mockFacturaService = new Mock<IFacturaService>();
             var mockEmailService = new Mock<IEmailService>();
+            var mockCapiLoggerAdapter = new Mock<IAppLogger>();
 
             var clientes = new List<Cliente>
             {
@@ -59,7 +61,7 @@ namespace FacturacionMail.Tests
             mockClienteService.Setup(s => s.ObtenerClientesAsync()).ReturnsAsync(clientes);
             mockClienteService.Setup(s => s.ObtenerClientesExcluidosAsync()).ReturnsAsync(excluidos);
 
-            var viewModel = new EnvioFacturasPendientesViewModel(mockClienteService.Object, mockFacturaService.Object, mockEmailService.Object);
+            var viewModel = new EnvioFacturasPendientesViewModel(mockClienteService.Object, mockFacturaService.Object, mockEmailService.Object, mockCapiLoggerAdapter.Object);
 
             var method = viewModel.GetType().GetMethod("CargarClientesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (method != null)

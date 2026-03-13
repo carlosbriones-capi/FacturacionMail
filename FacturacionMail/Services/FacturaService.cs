@@ -40,6 +40,7 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
 
         try
         {
+            _logger.ToLog($"[INFO] Consultando facturas: Mes '{mesAnio}', Clientes {clienteDesde}-{clienteHasta}, Facturas {facturaDesde}-{facturaHasta}");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
             await using var transaccion = await conexion.BeginTransactionAsync();
@@ -90,6 +91,7 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"ERROR: Error al obtener facturas desde la base de datos: {ex.Message}. StackTrace: {ex.StackTrace}");
             throw new Exception($"Error al obtener facturas desde la base de datos: {ex.Message}", ex);
         }
 
@@ -103,6 +105,7 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
 
         try
         {
+            _logger.ToLog($"[INFO] Consultando facturas pendientes para la lista ID: {listaId}");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
             await using var transaccion = await conexion.BeginTransactionAsync();
@@ -145,6 +148,7 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"ERROR: Error al obtener facturas pendientes (lista {listaId}): {ex.Message}. StackTrace: {ex.StackTrace}");
             throw new Exception($"Error al obtener facturas pendientes: {ex.Message}", ex);
         }
 
@@ -153,6 +157,7 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
 
     public async Task VisualizarFacturaAsync(string rutaArchivo)
     {
+        _logger.ToLog($"[INFO] Intentando visualizar factura: {rutaArchivo}");
         if (string.IsNullOrEmpty(rutaArchivo) || !File.Exists(rutaArchivo))
         {
             throw new FileNotFoundException($"No se encontró el archivo de la factura en: {rutaArchivo}");
@@ -179,6 +184,7 @@ public class FacturaService : DatabaseServiceBase, IFacturaService
             }
             catch (Exception ex)
             {
+                _logger.ToLog($"ERROR: Error al intentar visualizar el PDF ({rutaArchivo}): {ex.Message}. StackTrace: {ex.StackTrace}");
                 throw new Exception($"Error al intentar visualizar el PDF: {ex.Message}", ex);
             }
         }

@@ -14,7 +14,19 @@ public class CapiLoggerAdapter : IAppLogger, IDisposable
         var section = configuration.GetSection("Logging");
         
         string logPath = section["LogPath"] ?? "";
-        string logName = section["LogName"] ?? "";
+        string logName = section["LogName"] ?? "FacturacionMail.log";
+
+        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        int dotIndex = logName.LastIndexOf('.');
+        if (dotIndex >= 0)
+        {
+            logName = $"{logName.Substring(0, dotIndex)}_{timestamp}{logName.Substring(dotIndex)}";
+        }
+        else
+        {
+            logName = $"{logName}_{timestamp}";
+        }
+
         string monitorIP = section["MonitorIP"] ?? "";
         int monitorPort = int.TryParse(section["MonitorPort"], out int p) ? p : 0;
         string appName = section["AppName"] ?? "";

@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Windows;
@@ -21,7 +21,7 @@ namespace FacturacionMail
         public App()
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddIniFile("FacturacionMail.ini", optional: false, reloadOnChange: true);
 
             Configuration = builder.Build();
@@ -56,8 +56,32 @@ namespace FacturacionMail
         {
             base.OnStartup(e);
 
+            var logger = Services!.GetRequiredService<IAppLogger>();
+            logger.ToLog("--- INICIO APLICACION FACTURACION MAIL ---");
+            logger.EnviaPresencia();
+
+            this.DispatcherUnhandledException += (s, args) =>
+            {
+                logger.LogErr("ERROR CRITICO NO CONTROLADO", args.Exception);
+                MessageBox.Show($"Ocurrió un error inesperado: {args.Exception.Message}", "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
+                args.Handled = true;
+            };
+
             var mainWindow = Services!.GetRequiredService<MainWindow>();
             mainWindow.Show();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            var logger = Services?.GetService<IAppLogger>();
+            logger?.ToLog("--- CIERRE APLICACION FACTURACION MAIL ---");
+            
+            if (logger is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
+            base.OnExit(e);
         }
     }
 }

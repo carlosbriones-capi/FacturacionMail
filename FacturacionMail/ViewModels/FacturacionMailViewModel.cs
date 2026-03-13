@@ -15,6 +15,7 @@ public partial class FacturacionMailViewModel : ViewModelBase
     private readonly IClienteService _clienteService;
     private readonly IFacturaService _facturaService;
     private readonly IEmailService _emailService;
+    private readonly IAppLogger _logger;
 
     [ObservableProperty]
     private string _asuntoEmail = "Facturacion CM.Capital Markets mar-2026";
@@ -56,11 +57,12 @@ public partial class FacturacionMailViewModel : ViewModelBase
     
     public ICollectionView ClientesView { get; }
 
-    public FacturacionMailViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService)
+    public FacturacionMailViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService, IAppLogger logger)
     {
         _clienteService = clienteService;
         _facturaService = facturaService;
         _emailService = emailService;
+        _logger = logger;
 
         ClientesView = CollectionViewSource.GetDefaultView(Clientes);
         ClientesView.Filter = FiltrarCliente;
@@ -139,6 +141,7 @@ public partial class FacturacionMailViewModel : ViewModelBase
         
         try
         {
+            _logger.ToLog($"[USER ACTION] Inicio de proceso de envío masivo para {seleccionados.Count} clientes.");
             int enviosRealizados = 0;
             foreach (var cliente in seleccionados)
             {

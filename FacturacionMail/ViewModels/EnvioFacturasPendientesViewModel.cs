@@ -14,6 +14,7 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
     private readonly IClienteService _clienteService;
     private readonly IFacturaService _facturaService;
     private readonly IEmailService   _emailService;
+    private readonly IAppLogger      _logger;
 
     // ── Colecciones ───────────────────────────────────────────────────
 
@@ -61,11 +62,12 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
 
     // ── Constructor ───────────────────────────────────────────────────
 
-    public EnvioFacturasPendientesViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService)
+    public EnvioFacturasPendientesViewModel(IClienteService clienteService, IFacturaService facturaService, IEmailService emailService, IAppLogger logger)
     {
         _clienteService = clienteService;
         _facturaService = facturaService;
         _emailService   = emailService;
+        _logger         = logger;
 
         EmailForm = new EmailFormViewModel(
             "Facturas pendientes — CM Capital Markets",
@@ -264,6 +266,8 @@ public partial class EnvioFacturasPendientesViewModel : ViewModelBase
         {
             var selDirs  = Direcciones.Where(d => d.Seleccionada).ToList();
             var selFact  = Facturas.Where(f => f.Seleccionada).ToList();
+
+            _logger.ToLog($"[USER ACTION] Inicio de envío individual para cliente {ClienteSeleccionado?.Codigo} ({selDirs.Count} destinatarios, {selFact.Count} facturas).");
 
             if (!selDirs.Any())
             {

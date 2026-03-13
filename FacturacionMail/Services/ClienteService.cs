@@ -1,4 +1,4 @@
-﻿using FacturacionMail.Interfaces;
+using FacturacionMail.Interfaces;
 using FacturacionMail.Models;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -25,6 +25,7 @@ public class ClienteService : DatabaseServiceBase, IClienteService
 
         try
         {
+            _logger.ToLog("[INFO] Solicitando lista de clientes únicos a la base de datos.");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
 
@@ -60,9 +61,11 @@ public class ClienteService : DatabaseServiceBase, IClienteService
             }
 
             await transaccion.CommitAsync();
+            _logger.ToLog($"[INFO] Recuperados {listaClientes.Count} registros de clientes.");
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"ERROR: Error al obtener la lista de clientes desde la base de datos: {ex.Message}. StackTrace: {ex.StackTrace}");
             throw new Exception($"Error al obtener la lista de clientes desde la base de datos: {ex.Message}", ex);
         }
 
@@ -77,6 +80,7 @@ public class ClienteService : DatabaseServiceBase, IClienteService
 
         try
         {
+            _logger.ToLog("[INFO] Recuperando lista de clientes excluidos.");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
 
@@ -90,6 +94,7 @@ public class ClienteService : DatabaseServiceBase, IClienteService
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"ERROR: Error al obtener la lista de clientes excluidos: {ex.Message}. StackTrace: {ex.StackTrace}");
             throw new Exception($"Error al obtener la lista de clientes excluidos: {ex.Message}", ex);
         }
 

@@ -28,6 +28,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
 
         try
         {
+            _logger.ToLog($"[INFO] Obteniendo listas de envío para el cliente: {codigoCliente}");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
             await using var transaccion = await conexion.BeginTransactionAsync();
@@ -68,6 +69,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"[ERROR] Error al obtener listas de envío del cliente {codigoCliente}: {ex.Message}");
             throw new Exception($"Error al obtener listas de envío del cliente: {ex.Message}", ex);
         }
 
@@ -83,6 +85,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
 
         try
         {
+            _logger.ToLog($"[INFO] Obteniendo destinatarios de la lista de envío ID: {listaId}");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
             
@@ -101,6 +104,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"[ERROR] Error al obtener destinatarios de la lista de envío ID {listaId}: {ex.Message}");
             throw new Exception($"Error al obtener destinatarios de la lista de envío: {ex.Message}", ex);
         }
 
@@ -113,7 +117,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
         var configuracionZip = _config.GetSection("ZipSettings");
         
         double tamanoMaximoPermitidoMB = configuracionEmail.GetValue<double>("MaxAttachmentSizeMB", 10);
-        string rutaTemporalZip = configuracionZip["TempPath"] ?? Path.GetTempPath();
+        string rutaTemporalZip = configuracionZip["ZipPath"] ?? Path.GetTempPath();
         
         if (!Directory.Exists(rutaTemporalZip)) 
         {
@@ -133,16 +137,18 @@ public class EmailService : DatabaseServiceBase, IEmailService
 
         double tamanoTotalMB = totalBytesArchivos / (1024.0 * 1024.0);
         bool requiereCompresion = tamanoTotalMB > tamanoMaximoPermitidoMB;
-        string rutaAdjuntosFinales = string.Join(";", listaRutasArchivos);
-        int contadorFicheros = listaRutasArchivos.Count;
+        
+        string rutaAdjuntosFinales;
+        int contadorFicheros;
 
-        if (requiereCompresion && contadorFicheros > 0)
+        if (requiereCompresion && listaRutasArchivos.Count > 0)
         {
             string nombreArchivoZip = $"Facturas_{DateTime.Now:yyyyMMddHHmmss}.zip";
             string rutaCompletaZip = Path.Combine(rutaTemporalZip, nombreArchivoZip);
             
             try
             {
+                _logger.ToLog($"[INFO] Tamaño total ({tamanoTotalMB:F2} MB) supera el máximo ({tamanoMaximoPermitidoMB:F2} MB). Comprimiendo {listaRutasArchivos.Count} archivos en {rutaCompletaZip}");
                 using (var flujoArchivo = new FileStream(rutaCompletaZip, FileMode.Create))
                 using (var archivoZip = new ZipArchive(flujoArchivo, ZipArchiveMode.Create))
                 {
@@ -153,11 +159,19 @@ public class EmailService : DatabaseServiceBase, IEmailService
                 }
                 rutaAdjuntosFinales = rutaCompletaZip;
                 contadorFicheros = 1;
+                _logger.ToLog($"[INFO] Compresión finalizada correctamente. Ruta del adjunto: {rutaAdjuntosFinales}");
             }
             catch (Exception ex)
             {
+                _logger.ToLog($"[ERROR] Error durante el proceso de compresión de archivos: {ex.Message}");
                 throw new Exception($"Error durante el proceso de compresión de archivos: {ex.Message}", ex);
             }
+        }
+        else
+        {
+            rutaAdjuntosFinales = string.Join(";", listaRutasArchivos);
+            contadorFicheros = listaRutasArchivos.Count;
+            _logger.ToLog($"[INFO] No requiere compresión o no hay archivos. Ruta de adjuntos: {(contadorFicheros > 0 ? "lista de ficheros" : "vacia")} ({contadorFicheros} ficheros)");
         }
 
         string nombreTabla = GetTableName("EnviosHistoricos");
@@ -173,6 +187,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
 
         try
         {
+            _logger.ToLog($"[INFO] Registrando orden de envío en base de datos con {contadorFicheros} adjunto(s).");
             await using var conexion = new NpgsqlConnection(_connectionString);
             await conexion.OpenAsync();
             await using var command = new NpgsqlCommand(sql, conexion);
@@ -192,6 +207,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
         }
         catch (Exception ex)
         {
+            _logger.LogErr("Error al registrar el envio de correos:", ex);
             throw new Exception($"Error al registrar el envío: {ex.Message}", ex);
         }
         
@@ -263,6 +279,7 @@ public class EmailService : DatabaseServiceBase, IEmailService
         }
         catch (Exception ex)
         {
+            _logger.ToLog($"[ERROR] Error al obtener los estados de envío de mail: {ex.Message}");
             throw new Exception($"Error al obtener estados de envío: {ex.Message}", ex);
         }
 
