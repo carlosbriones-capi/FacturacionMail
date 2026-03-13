@@ -22,8 +22,8 @@ namespace FacturacionMail
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddIniFile("FacturacionMail.ini", optional: false, reloadOnChange: true);
-
+                .AddIniFile("FacturacionMail.ini", optional: false, reloadOnChange: false);
+            
             Configuration = builder.Build();
 
             var serviceCollection = new ServiceCollection();
